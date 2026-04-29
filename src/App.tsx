@@ -1,94 +1,56 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, useEffect, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { RotateCcw, Volume2, VolumeX } from 'lucide-react';
 
-// --- CONFIGURATION ---
-const RECIPIENT_NAME = "Special Someone"; // <-- CHANGE THIS TO HER NAME
-const MUSIC_URL = "https://www.bensound.com/bensound-music/bensound-love.mp3"; // Optional: Add a direct link to an MP3
+// Components
+import { EntryPage } from './components/EntryPage';
+import { Login } from './components/Login';
+import { Heart } from './components/Heart';
+import { PopEffect } from './components/PopEffect';
+import { BackgroundTwinkle } from './components/BackgroundTwinkle';
 
-const messages = [
-  `Hey ${RECIPIENT_NAME} 💞`,
-  "Happy Birthday 🎂",
-  "May God bless you 🌟",
-  "And give a many happiness 🌈",
-  "Just saying... you're pretty awesome 💖",
-  "Sending good vibes and maybe a wink 😉",
-  "Hope u have a great day today ❤️"
-];
-
-const Heart = ({ delay, x, y, size, color }: { delay: number; x: number; y: number; size: number; color: string }) => (
-  <motion.path
-    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-    fill={color}
-    initial={{ scale: 0, opacity: 0, x, y }}
-    animate={{ scale: size, opacity: 1 }}
-    transition={{ delay, duration: 0.8, ease: "easeOut" }}
-    style={{ transformOrigin: 'center' }}
-  />
-);
-
-const TypewriterText = ({ text, delay, onComplete }: { text: string; delay: number; onComplete?: () => void }) => {
-  const [displayedText, setDisplayedText] = useState('');
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      let i = 0;
-      const interval = setInterval(() => {
-        setDisplayedText(text.slice(0, i + 1));
-        i++;
-        if (i === text.length) {
-          clearInterval(interval);
-          if (onComplete) onComplete();
-        }
-      }, 50);
-      return () => clearInterval(interval);
-    }, delay * 1000);
-    return () => clearTimeout(timeout);
-  }, [text, delay, onComplete]);
-
-  return (
-    <motion.p
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="text-white text-lg md:text-xl font-medium mb-1 drop-shadow-lg"
-    >
-      {displayedText}
-      {displayedText.length < text.length && (
-        <motion.span
-          animate={{ opacity: [1, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity, ease: "steps(2)" }}
-          className="inline-block w-1 h-5 bg-pink-400 ml-1 translate-y-1"
-        />
-      )}
-    </motion.p>
-  );
-};
+// Constants & Types
+import { messages, interactiveMessages, MUSIC_URL } from './constants';
+import { generateHeartsData } from './services/heartService';
 
 export default function App() {
+  const [hasEntered, setHasEntered] = useState(false);
+  const [isLogged, setIsLogged] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [showText, setShowText] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  const [key, setKey] = useState(0); // For resetting animations
-  const [completedMessages, setCompletedMessages] = useState(0);
+  const [key, setKey] = useState(0); 
+  const [pops, setPops] = useState<{ id: number; x: number; y: number; message: string }[]>([]);
+  const [popIndex, setPopIndex] = useState(0);
+
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   const startExperience = () => {
     setHasStarted(true);
     setIsMusicPlaying(true);
-    // Note: To actually play music, you'd handle an <audio> element here
+    if (audioRef.current) {
+        audioRef.current.play().catch(e => console.log("Audio play failed:", e));
+    }
   };
 
   const resetExperience = useCallback(() => {
     setKey(prev => prev + 1);
     setShowText(false);
-    setCompletedMessages(0);
-    // Tree reset logic is automatic because of the 'key'
+    setPops([]);
+    setPopIndex(0);
     setTimeout(() => setShowText(true), 4000);
   }, []);
+
+  const handlePop = useCallback((id: number, x: number, y: number) => {
+    const newPop = {
+      id: Date.now() + id,
+      x,
+      y,
+      message: interactiveMessages[popIndex % interactiveMessages.length]
+    };
+    setPops(prev => [...prev, newPop]);
+    setPopIndex(prev => prev + 1);
+  }, [popIndex]);
 
   useEffect(() => {
     if (hasStarted) {
@@ -97,199 +59,175 @@ export default function App() {
     }
   }, [hasStarted, key]);
 
-  // Generate a bunch of hearts in a heart shape
-  const hearts = Array.from({ length: 120 }).map((_, i) => {
-    const angle = (i / 120) * 2 * Math.PI;
-    const t = angle;
-    const hX = 16 * Math.pow(Math.sin(t), 3);
-    const hY = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-    const jitter = Math.random() * 5;
-    const scale = 5 + Math.random() * 5;
-    
-    return {
-      x: 200 + hX * scale + (Math.random() - 0.5) * jitter * 10,
-      y: 180 + hY * scale + (Math.random() - 0.5) * jitter * 10,
-      size: 0.2 + Math.random() * 0.4,
-      color: `hsl(${330 + Math.random() * 60}, ${70 + Math.random() * 30}%, ${50 + Math.random() * 20}%)`,
-      delay: 2 + Math.random() * 2
-    };
-  });
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isMusicPlaying) audioRef.current.play().catch(e => console.log(e));
+      else audioRef.current.pause();
+    }
+  }, [isMusicPlaying]);
+
+  const heartsData = useMemo(() => generateHeartsData(key), [key]);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 md:p-8 overflow-hidden font-sans select-none relative">
+    <main className="min-h-screen bg-black flex items-center justify-center p-4 overflow-hidden font-sans select-none relative">
+      <audio ref={audioRef} src={MUSIC_URL} loop />
       
       <AnimatePresence mode="wait">
-        {!hasStarted ? (
-          <motion.div
-            key="start-screen"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="flex flex-col items-center z-50 px-4 text-center"
-          >
-            <motion.h1 
-              initial={{ y: 20 }}
-              animate={{ y: 0 }}
-              className="text-white text-3xl md:text-5xl font-bold mb-8 tracking-tighter"
-            >
-              For someone special... ✨
-            </motion.h1>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={startExperience}
-              className="flex items-center gap-2 bg-pink-600 hover:bg-pink-500 text-white px-8 py-4 rounded-full font-bold text-xl shadow-[0_0_20px_rgba(219,39,119,0.4)] transition-colors"
-            >
-              <Play size={24} fill="currentColor" />
-              Open Message
-            </motion.button>
+        {!hasEntered ? (
+          <motion.div key="entry-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0">
+            <EntryPage onEnter={() => setHasEntered(true)} />
+          </motion.div>
+        ) : !isLogged ? (
+          <motion.div key="login-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0">
+            <Login onSuccess={() => setIsLogged(true)} />
           </motion.div>
         ) : (
-          <motion.div
-            key={`experience-${key}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="w-full h-full flex flex-col md:flex-row items-center justify-center max-w-7xl mx-auto"
-          >
-            {/* Tree Section */}
-            <div className="relative w-full max-w-2xl aspect-square flex items-center justify-center">
-              <svg viewBox="0 0 400 400" className="w-full h-full max-h-[500px]">
-                <motion.path
-                  d="M200,400 Q200,300 200,200"
-                  stroke="#ec4899"
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, ease: "easeInOut" }}
-                />
-                <motion.path
-                  d="M200,300 Q250,250 300,200"
-                  stroke="#ec4899"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1, duration: 1.2, ease: "easeInOut" }}
-                />
-                <motion.path
-                  d="M200,300 Q150,250 100,200"
-                  stroke="#ec4899"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1, duration: 1.2, ease: "easeInOut" }}
-                />
-                <motion.path
-                  d="M200,250 Q230,220 250,150"
-                  stroke="#f472b6"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1.5, duration: 1, ease: "easeInOut" }}
-                />
-                <motion.path
-                  d="M200,250 Q170,220 150,150"
-                  stroke="#f472b6"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1.5, duration: 1, ease: "easeInOut" }}
-                />
-                <motion.path
-                  d="M200,200 Q200,150 200,100"
-                  stroke="#f472b6"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1.8, duration: 1, ease: "easeInOut" }}
-                />
-
-                {hearts.map((heart, i) => (
-                  <Heart key={i} {...heart} />
-                ))}
-              </svg>
-
-              {/* Floating particles */}
-              {Array.from({ length: 15 }).map((_, i) => (
+          <motion.div key="content-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-black z-[50]">
+            <BackgroundTwinkle />
+            <AnimatePresence mode="wait">
+              {!hasStarted ? (
                 <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0, y: 0 }}
-                  animate={{ 
-                    opacity: [0, 0.4, 0], 
-                    scale: [0, 1, 0],
-                    y: -100 - Math.random() * 200,
-                    x: (Math.random() - 0.5) * 400
-                  }}
-                  transition={{ 
-                    duration: 4 + Math.random() * 4, 
-                    repeat: Infinity, 
-                    delay: Math.random() * 5 
-                  }}
-                  className="absolute w-2 h-2 rounded-full bg-pink-300 pointer-events-none blur-sm"
-                  style={{ left: '50%', top: '60%' }}
-                />
-              ))}
-            </div>
-
-            {/* Text Section */}
-            <div className="flex-1 flex flex-col items-start justify-center min-w-[300px] mt-8 md:mt-0 md:pl-12 w-full">
-              <div className="min-h-[300px] w-full flex flex-col justify-center">
-                {showText && messages.map((msg, i) => (
-                  <TypewriterText 
-                    key={`${key}-${i}`} 
-                    text={msg} 
-                    delay={i * 2} 
-                    onComplete={() => setCompletedMessages(prev => prev + 1)}
-                  />
-                ))}
-              </div>
-
-              {/* Action Buttons */}
-              {completedMessages >= messages.length && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 flex gap-4"
+                  key="start-screen"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.1 }}
+                  className="flex flex-col items-center justify-center z-50 px-6 text-center w-full h-full"
                 >
-                  <button
-                    onClick={resetExperience}
-                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg backdrop-blur-sm transition-all border border-white/10 group"
+                  <motion.h1 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-pink-100 text-5xl md:text-8xl font-romantic mb-12 drop-shadow-[0_0_30px_rgba(255,192,203,0.6)]"
                   >
-                    <RotateCcw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
-                    Replay
-                  </button>
+                    For you... ✨
+                  </motion.h1>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={startExperience}
+                    className="bg-gradient-to-r from-pink-600 to-rose-500 text-white px-12 py-4 md:px-16 md:py-6 rounded-full font-bold text-xl md:text-3xl shadow-[0_0_40px_rgba(225,29,72,0.45)] transition-all cursor-pointer"
+                  >
+                    Open Message
+                  </motion.button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={`experience-${key}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="w-full h-full flex flex-col md:flex-row items-center justify-center max-w-7xl mx-auto z-10 gap-2 md:gap-4 overflow-hidden px-4 py-6 md:py-0"
+                >
+                  <div className="relative w-full max-w-[85vw] md:max-w-2xl aspect-square flex items-center justify-center shrink-0">
+                    <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-[0_0_20px_rgba(190,24,93,0.3)]">
+                      <motion.path
+                        d="M200,400 Q200,320 200,240"
+                        stroke="#8e244d"
+                        strokeWidth="12"
+                        strokeLinecap="round"
+                        fill="none"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 1.5 }}
+                      />
+                      <g className="opacity-60">
+                          <motion.path d="M200,300 Q260,260 340,160" stroke="#be185d" strokeWidth="4.5" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.5, duration: 1.2 }} />
+                          <motion.path d="M200,300 Q140,260 60,160" stroke="#be185d" strokeWidth="4.5" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.5, duration: 1.2 }} />
+                          <motion.path d="M270,240 Q310,210 350,180" stroke="#db2777" strokeWidth="3" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.8, duration: 1.2 }} />
+                          <motion.path d="M130,240 Q90,210 50,180" stroke="#db2777" strokeWidth="3" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.8, duration: 1.2 }} />
+                          <motion.path d="M200,260 Q200,180 200,100" stroke="#db2777" strokeWidth="2.5" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 1 }} />
+                          {/* Small Romantic Twigs */}
+                          <motion.path d="M240,280 Q260,265 280,250" stroke="#be185d" strokeWidth="1.8" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.4, duration: 0.8 }} />
+                          <motion.path d="M160,280 Q140,265 120,250" stroke="#be185d" strokeWidth="1.8" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.4, duration: 0.8 }} />
+                          <motion.path d="M200,200 Q230,180 260,160" stroke="#db2777" strokeWidth="1.5" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.6, duration: 0.7 }} />
+                          <motion.path d="M200,200 Q170,180 140,160" stroke="#db2777" strokeWidth="1.5" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.6, duration: 0.7 }} />
+                          {/* Even smaller twigs */}
+                          <motion.path d="M230,180 Q240,160 250,140" stroke="#be185d" strokeWidth="1.2" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.8, duration: 0.6 }} />
+                          <motion.path d="M170,180 Q160,160 150,140" stroke="#be185d" strokeWidth="1.2" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.8, duration: 0.6 }} />
+                          <motion.path d="M200,150 Q210,130 220,110" stroke="#db2777" strokeWidth="0.8" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 2.0, duration: 0.5 }} />
+                          <motion.path d="M200,150 Q190,130 180,110" stroke="#db2777" strokeWidth="0.8" strokeLinecap="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 2.0, duration: 0.5 }} />
+                      </g>
+    
+                      {heartsData.map((heart) => (
+                        <Heart key={heart.id} {...heart} onPop={handlePop} />
+                      ))}
+                    </svg>
+    
+                    <div className="absolute inset-0 pointer-events-none">
+                      {pops.map(pop => (
+                        <PopEffect 
+                          key={pop.id} 
+                          x={(pop.x / 400) * 100 + "%"} 
+                          y={(pop.y / 400) * 100 + "%"} 
+                          message={pop.message}
+                          onComplete={() => setPops(prev => prev.filter(p => p.id !== pop.id))}
+                        />
+                      ))}
+                    </div>
+                  </div>
+    
+                  <div className="flex-1 flex flex-col items-center md:items-start justify-center min-w-[240px] w-full relative z-20 px-2 md:px-0 md:pl-12">
+                    <div className="min-h-[80px] md:min-h-[300px] w-full flex flex-col justify-center text-center md:text-left">
+                      {showText && messages.map((msg, i) => (
+                        <motion.p
+                          key={`${key}-${i}`}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 2, duration: 0.8 }}
+                          className="text-white text-[13px] md:text-3xl font-romantic mb-1 md:mb-2 drop-shadow-md leading-tight"
+                        >
+                          {msg}
+                        </motion.p>
+                      ))}
+                    </div>
+    
+                    {hasStarted && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: messages.length * 2 + 1 }}
+                        className="mt-4 md:mt-10 flex flex-wrap gap-2 md:gap-3 justify-center md:justify-start"
+                      >
+                        <button
+                          onClick={resetExperience}
+                          className="flex items-center gap-2 bg-pink-500/20 text-pink-100 px-4 py-2 rounded-xl backdrop-blur-md border border-pink-500/30 hover:bg-pink-500/30 transition-all font-romantic text-xs md:text-lg"
+                        >
+                          <RotateCcw size={14} /> Watch Again
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsLogged(false);
+                            setHasStarted(false);
+                            setIsMusicPlaying(false);
+                          }}
+                          className="flex items-center gap-2 bg-white/5 text-white/70 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all font-romantic text-xs md:text-lg"
+                        >
+                          Back
+                        </button>
+                        <p className="w-full text-pink-200/30 text-[10px] md:text-sm italic mt-2 font-serif text-center md:text-left">Pop the hearts on the tree for special notes... 💖</p>
+                      </motion.div>
+                    )}
+                  </div>
                 </motion.div>
               )}
-            </div>
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Global Controls */}
-      {hasStarted && (
-        <div className="fixed top-8 right-8 z-50 flex gap-2">
-          <button
-            onClick={() => setIsMusicPlaying(!isMusicPlaying)}
-            className="p-3 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all backdrop-blur-md border border-white/10"
-          >
-            {isMusicPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
-          </button>
-        </div>
-      )}
+      <div className="fixed top-8 right-8 z-[110] flex gap-3">
+        <button
+          onClick={() => setIsMusicPlaying(!isMusicPlaying)}
+          className="p-4 rounded-full bg-pink-950/20 text-pink-100/40 border border-pink-100/10 backdrop-blur-md hover:bg-pink-500/20 hover:text-pink-100 transition-all"
+        >
+          {isMusicPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
+        </button>
+      </div>
 
-      {/* Background Decor */}
-      <div className="fixed inset-0 bg-radial-gradient from-transparent to-black pointer-events-none opacity-60" />
+      {hasEntered && isLogged && (
+        <div 
+          className="fixed inset-0 pointer-events-none opacity-60 z-0" 
+          style={{ background: 'radial-gradient(circle at center, rgba(131, 24, 67, 0.2) 0%, #000 80%)' }}
+        />
+      )}
     </main>
   );
 }

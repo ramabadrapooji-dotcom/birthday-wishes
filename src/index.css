@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+@theme {
+  --font-romantic: "Dancing Script", cursive;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;600&display=swap');
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #000;
+}
+
+.markdown-body {
+  @apply text-pink-100/90 leading-relaxed;
+}
+
+.markdown-body h1, .markdown-body h2 {
+  @apply text-pink-200 font-romantic mb-4;
+}
+
+.markdown-body p {
+  @apply mb-4;
+}
