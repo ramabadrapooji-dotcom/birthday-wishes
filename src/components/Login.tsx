@@ -99,15 +99,7 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
             <div className="mt-1 md:mt-4 text-center">
                 <p className="font-romantic text-gray-800 text-sm md:text-2xl opacity-70">Our Magic Moments ✨</p>
             </div>
-              <motion.div 
-                animate={{ 
-                  scale: passcode[i] ? 1.05 : 1,
-                  borderColor: passcode[i] ? "rgba(255, 192, 203, 0.8)" : "rgba(255,192,203,0.2)",
-                  backgroundColor: passcode[i] ? "rgba(255,192,203,0.15)" : "rgba(0,0,0,0.3)"
-                }}
-                transition={{ duration: 0.08 }}
-                className="w-5 h-7 md:w-10 md:h-14 border-[1.5px] rounded-sm md:rounded-lg transition-all flex items-center justify-center backdrop-blur-xl shadow-[0_0_10px_rgba(0,0,0,0.3)]"
-              >
+          </motion.div>
 
           <div className="flex gap-0.5 md:gap-2 mb-1 md:mb-3">
             {[...Array(4)].map((_, i) => (
