@@ -147,7 +147,7 @@ export default function App() {
                       </g>
     
                       {heartsData.map((heart) => (
-                        <Heart key={heart.id} {...heart} onPop={handlePop} />
+                        <Heart {...heart} onPop={handlePop} key={heart.id} />
                       ))}
                     </svg>
     

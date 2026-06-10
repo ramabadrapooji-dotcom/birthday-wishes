@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import React, { useMemo } from 'react';
+import { PHOTO_URL } from '../constants';
 
 export const EntryPage = ({ onEnter }: { onEnter: () => void }) => {
   const floatingHearts = useMemo(() => Array.from({ length: 25 }), []);
@@ -48,6 +49,8 @@ export const EntryPage = ({ onEnter }: { onEnter: () => void }) => {
         <h1 className="text-[#F48FB1] font-romantic text-4xl md:text-6xl mb-12 tracking-[0.2em] opacity-80 text-center px-4">
           A Journey of Love
         </h1>
+        {/* Hidden preload so the login photo downloads while user stays on entry page */}
+        <img src={PHOTO_URL} alt="preload" style={{ display: 'none' }} />
         <motion.button
           whileHover={{ scale: 1.1, backgroundColor: '#FCE4EC', color: '#F06292' }}
           whileTap={{ scale: 0.95 }}

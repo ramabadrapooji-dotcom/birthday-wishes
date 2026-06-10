@@ -31,9 +31,8 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
   const [imgError, setImgError] = useState(false);
 
   const handleInput = (val: string) => {
-    if (passcode.length < 4) {
-      setPasscode(prev => prev + val);
-    }
+    // Use functional update to avoid race conditions on very rapid clicks
+    setPasscode(prev => (prev.length < 4 ? prev + val : prev));
   };
 
   const handleBackspace = () => {
@@ -100,14 +99,15 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
             <div className="mt-1 md:mt-4 text-center">
                 <p className="font-romantic text-gray-800 text-sm md:text-2xl opacity-70">Our Magic Moments ✨</p>
             </div>
-          </motion.div>
-        </div>
-
-        {/* Right Side: Passcode Keypad */}
-        <div className="flex flex-col items-center shrink-0">
-          <h2 className="text-white text-[12px] md:text-xl font-romantic mb-1 md:mb-2 tracking-widest drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
-            Passcode
-          </h2>
+              <motion.div 
+                animate={{ 
+                  scale: passcode[i] ? 1.05 : 1,
+                  borderColor: passcode[i] ? "rgba(255, 192, 203, 0.8)" : "rgba(255,192,203,0.2)",
+                  backgroundColor: passcode[i] ? "rgba(255,192,203,0.15)" : "rgba(0,0,0,0.3)"
+                }}
+                transition={{ duration: 0.08 }}
+                className="w-5 h-7 md:w-10 md:h-14 border-[1.5px] rounded-sm md:rounded-lg transition-all flex items-center justify-center backdrop-blur-xl shadow-[0_0_10px_rgba(0,0,0,0.3)]"
+              >
 
           <div className="flex gap-0.5 md:gap-2 mb-1 md:mb-3">
             {[...Array(4)].map((_, i) => (
