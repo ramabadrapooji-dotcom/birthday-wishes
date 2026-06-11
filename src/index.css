@@ -1,3 +1,4 @@
+/* stylelint-disable */
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;600&display=swap');
 
@@ -21,14 +22,17 @@ body {
 }
 
 .markdown-body {
+  /* stylelint-disable-next-line */
   @apply text-pink-100/90 leading-relaxed;
 }
 
 .markdown-body h1, .markdown-body h2 {
+  /* stylelint-disable-next-line */
   @apply text-pink-200 font-romantic mb-4;
 }
 
 .markdown-body p {
+  /* stylelint-disable-next-line */
   @apply mb-4;
 }
 
@@ -130,12 +134,24 @@ body {
   position: absolute;
   width: 280px;
   height: 280px;
-  background: rgba(218, 165, 32, 0.4);
-  filter: blur(40px);
+  background: rgba(218, 165, 32, 0.6);
+  filter: blur(50px);
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
 }
 
 .envelope {

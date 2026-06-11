@@ -70,10 +70,10 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
       <FloatingHearts />
       <BackgroundTwinkle />
       
-      <div className="w-full max-w-4xl flex flex-col md:flex-row items-center justify-center gap-1 md:gap-12 relative z-10 py-1 md:py-4">
+      <div className="w-full max-w-7xl flex flex-col md:flex-row items-start md:items-center justify-center gap-4 md:gap-8 relative z-10 py-2 md:py-6 px-2">
         
-        {/* Left Side: Polaroid */}
-        <div className="relative group shrink-0">
+        {/* LEFT SIDE: Polaroid Photo */}
+        <div className="flex-shrink-0 w-full md:w-auto flex justify-center">
           <motion.div 
             initial={{ rotate: -5, scale: 0.9, y: 20 }}
             animate={{ rotate: -2, scale: 0.95, y: 0 }}
@@ -100,8 +100,12 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
                 <p className="font-romantic text-gray-800 text-sm md:text-2xl opacity-70">Our Magic Moments ✨</p>
             </div>
           </motion.div>
+        </div>
 
-          <div className="flex gap-0.5 md:gap-2 mb-1 md:mb-3">
+        {/* RIGHT SIDE: Passcode & Keypad */}
+        <div className="flex flex-col items-center gap-3 md:gap-4 w-full md:w-auto">
+          {/* Passcode Input Boxes */}
+          <div className="flex gap-0.5 md:gap-2">
             {[...Array(4)].map((_, i) => (
               <motion.div 
                 key={i}

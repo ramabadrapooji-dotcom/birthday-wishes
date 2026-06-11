@@ -5,87 +5,12 @@ interface Stage4Props {
 }
 
 export const Stage4 = ({ onBack }: Stage4Props) => {
+  const confetti = Array.from({ length: 20 }, (_, i) => i);
+
   return (
     <>
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Top Left Bunting / Flags */}
-        <div className="absolute top-0 left-0 w-64 md:w-96 select-none pointer-events-none">
-          <svg viewBox="0 0 200 60" preserveAspectRatio="none" className="w-full h-12 md:h-16 opacity-90 drop-shadow-sm">
-            <polygon points="0,0 20,40 40,0" fill="#ff7ba3" />
-            <polygon points="40,0 60,50 80,0" fill="#ff9ebf" />
-            <polygon points="80,0 100,40 120,0" fill="#ff7ba3" />
-            <polygon points="120,0 140,50 160,0" fill="#ff9ebf" />
-          </svg>
-        </div>
-
-        {/* Top Right Bunting / Flags */}
-        <div className="absolute top-0 right-0 w-64 md:w-96 select-none pointer-events-none">
-          <svg viewBox="0 0 200 60" preserveAspectRatio="none" className="w-full h-12 md:h-16 opacity-90 scale-x-[-1] drop-shadow-sm">
-            <polygon points="0,0 20,40 40,0" fill="#ff7ba3" />
-            <polygon points="40,0 60,50 80,0" fill="#ff9ebf" />
-            <polygon points="80,0 100,40 120,0" fill="#ff7ba3" />
-            <polygon points="120,0 140,50 160,0" fill="#ff9ebf" />
-          </svg>
-        </div>
-
-        {/* Party Hat */}
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0, rotate: [-15, 5, -15] }}
-          transition={{ y: { duration: 0.8 }, rotate: { duration: 4, repeat: Infinity, ease: 'easeInOut' } }}
-          className="absolute top-[10%] left-[35%] md:left-[30%] select-none z-0"
-        >
-          <svg width="80" height="80" viewBox="0 0 100 100" className="drop-shadow-md -rotate-12">
-            {/* Main Cone */}
-            <path d="M20 80 L80 80 L50 20 Z" fill="#2d3436" />
-            {/* Pink Base Strip / Pattern */}
-            <path d="M25 70 L75 70 L80 80 L20 80 Z" fill="#ff4b82" />
-            {/* Polka Dots */}
-            <circle cx="35" cy="35" r="4" fill="#ff4b82" />
-            <circle cx="65" cy="35" r="4" fill="#ff4b82" />
-            <circle cx="45" cy="45" r="4" fill="#ff4b82" />
-            <circle cx="55" cy="55" r="4" fill="#ff4b82" />
-            <circle cx="40" cy="65" r="4" fill="#ff4b82" />
-            {/* Pompom Top */}
-            <circle cx="50" cy="15" r="10" fill="#ff4b82" />
-          </svg>
-        </motion.div>
-
-        {/* Balloon 1 (Right) */}
-        <motion.div
-          animate={{ y: [-10, 10, -10] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[15%] right-[10%] md:right-[15%] w-16 h-20 shadow-lg -rotate-12 z-0"
-          style={{ borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%', background: '#ffaec9' }}
-        >
-          <div className="absolute -bottom-[8px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[8px] border-l-transparent border-r-transparent border-b-[#ffaec9]" />
-          <div className="absolute -bottom-[32px] left-1/2 w-px h-8 bg-gray-400" />
-        </motion.div>
-
-        {/* Balloon 2 (Right Mid) */}
-        <motion.div
-          animate={{ y: [-15, 15, -15] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute bottom-[20%] right-[-20px] md:right-[5%] w-20 h-28 shadow-lg rotate-12 z-0 opacity-80"
-          style={{ borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%', background: '#ff7ba3' }}
-        >
-          <div className="absolute -bottom-[8px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[8px] border-l-transparent border-r-transparent border-b-[#ff7ba3]" />
-          <div className="absolute -bottom-[32px] left-1/2 w-px h-8 bg-gray-400" />
-        </motion.div>
-
-        {/* Diffused Hearts */}
-        <motion.div
-          animate={{ y: [0, -20, 0], opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[60%] left-[40%] opacity-40 z-0"
-        >
-          <span style={{ fontSize: '30px', color: '#ffb4cc' }}>♥</span>
-        </motion.div>
-      </div>
-
-      {/* Hero Content */}
-      <div className="hero">
+      {/* Hero Content (lower z-index so decorations appear on top) */}
+      <div className="hero relative z-10">
         <div className="left">
           <motion.h1
             initial={{ opacity: 0, x: -50 }}
@@ -134,6 +59,137 @@ export const Stage4 = ({ onBack }: Stage4Props) => {
           </div>
           <div className="name-tag">♥ Love You So Much ♥</div>
         </div>
+      </div>
+
+      {/* Confetti/Falling Elements (higher z-index) */}
+      <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden">
+        {confetti.map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: -20, x: Math.random() * 100 - 50 }}
+            animate={{ opacity: [1, 1, 0], y: window.innerHeight + 20, rotate: 360 }}
+            transition={{
+              duration: 4 + Math.random() * 3,
+              delay: i * 0.1,
+              repeat: Infinity,
+              ease: 'easeIn',
+            }}
+            className="absolute text-2xl"
+            style={{ left: `${Math.random() * 100}%`, top: `-20px` }}
+          >
+            {['🎉', '✨', '💖', '🎊', '⭐'][i % 5]}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Decorative Background Elements (higher z-index) */}
+      <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">
+        {/* Top Left Bunting / Flags */}
+        <div className="absolute top-0 left-0 w-64 md:w-96 select-none pointer-events-none z-30">
+          <svg viewBox="0 0 200 60" preserveAspectRatio="none" className="w-full h-12 md:h-16 opacity-100 drop-shadow-lg">
+            <polygon points="0,0 20,40 40,0" fill="#ff7ba3" />
+            <polygon points="40,0 60,50 80,0" fill="#ff9ebf" />
+            <polygon points="80,0 100,40 120,0" fill="#ff7ba3" />
+            <polygon points="120,0 140,50 160,0" fill="#ff9ebf" />
+          </svg>
+        </div>
+
+        {/* Top Right Bunting / Flags */}
+        <div className="absolute top-0 right-0 w-64 md:w-96 select-none pointer-events-none z-30">
+          <svg viewBox="0 0 200 60" preserveAspectRatio="none" className="w-full h-12 md:h-16 opacity-100 scale-x-[-1] drop-shadow-lg">
+            <polygon points="0,0 20,40 40,0" fill="#ff7ba3" />
+            <polygon points="40,0 60,50 80,0" fill="#ff9ebf" />
+            <polygon points="80,0 100,40 120,0" fill="#ff7ba3" />
+            <polygon points="120,0 140,50 160,0" fill="#ff9ebf" />
+          </svg>
+        </div>
+
+        {/* Party Hat */}
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0, rotate: [-15, 8, -12, 5, -15] }}
+          transition={{ y: { duration: 0.8 }, rotate: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' } }}
+          className="absolute top-[8%] left-[33%] md:left-[28%] select-none z-40"
+        >
+          <svg width="100" height="100" viewBox="0 0 100 100" className="drop-shadow-xl -rotate-12 filter drop-shadow-[0_5px_15px_rgba(255,75,130,0.4)]">
+            {/* Main Cone */}
+            <path d="M20 80 L80 80 L50 20 Z" fill="#2d3436" />
+            {/* Pink Base Strip / Pattern */}
+            <path d="M25 70 L75 70 L80 80 L20 80 Z" fill="#ff4b82" />
+            {/* Polka Dots */}
+            <circle cx="35" cy="35" r="5" fill="#ff4b82" />
+            <circle cx="65" cy="35" r="5" fill="#ff4b82" />
+            <circle cx="45" cy="45" r="5" fill="#ff4b82" />
+            <circle cx="55" cy="55" r="5" fill="#ff4b82" />
+            <circle cx="40" cy="65" r="5" fill="#ff4b82" />
+            {/* Pompom Top */}
+            <circle cx="50" cy="15" r="12" fill="#ff4b82" />
+          </svg>
+        </motion.div>
+
+        {/* Balloon 1 (Right) */}
+        <motion.div
+          animate={{ y: [-30, 20, -30], x: [-5, 5, -5], rotate: [-12, 0, -12] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-[12%] right-[8%] md:right-[12%] w-20 h-24 shadow-xl z-30"
+          style={{ borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%', background: '#ffaec9' }}
+        >
+          <motion.div 
+            className="absolute -bottom-[10px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-r-[8px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#ffaec9]"
+            animate={{ scaleY: [1, 1.1, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+          />
+          <motion.div 
+            className="absolute -bottom-[40px] left-1/2 w-1 h-10 bg-gradient-to-b from-gray-400 to-gray-500"
+            animate={{ rotate: [-3, 3, -3] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          />
+        </motion.div>
+
+        {/* Balloon 2 (Right Mid) */}
+        <motion.div
+          animate={{ y: [-40, 30, -40], x: [5, -5, 5], rotate: [12, -5, 12] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+          className="absolute bottom-[18%] right-[-15px] md:right-[3%] w-24 h-32 shadow-xl z-30 opacity-95"
+          style={{ borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%', background: '#ff7ba3' }}
+        >
+          <motion.div 
+            className="absolute -bottom-[10px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-r-[8px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#ff7ba3]"
+            animate={{ scaleY: [1, 1.1, 1] }}
+            transition={{ duration: 2.8, repeat: Infinity, delay: 0.8 }}
+          />
+          <motion.div 
+            className="absolute -bottom-[40px] left-1/2 w-1 h-12 bg-gradient-to-b from-gray-500 to-gray-600"
+            animate={{ rotate: [3, -3, 3] }}
+            transition={{ duration: 3.2, repeat: Infinity, delay: 0.8 }}
+          />
+        </motion.div>
+
+        {/* Diffused Hearts */}
+        <motion.div
+          animate={{ y: [0, -30, 0], opacity: [0.5, 1, 0.5], scale: [0.9, 1.2, 0.9] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-[65%] left-[38%] z-20"
+        >
+          <span style={{ fontSize: '40px', color: '#ffb4cc' }}>♥</span>
+        </motion.div>
+
+        {/* Extra decorative hearts */}
+        <motion.div
+          animate={{ y: [10, -25, 10], opacity: [0.4, 0.9, 0.4] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+          className="absolute top-[50%] left-[15%] z-20 opacity-70"
+        >
+          <span style={{ fontSize: '28px', color: '#ff7ba3' }}>♥</span>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [-15, 20, -15], opacity: [0.5, 0.95, 0.5] }}
+          transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          className="absolute top-[55%] right-[10%] z-20 opacity-75"
+        >
+          <span style={{ fontSize: '32px', color: '#ffaec9' }}>♥</span>
+        </motion.div>
       </div>
 
       {/* Footer */}
