@@ -1,6 +1,6 @@
 /* stylelint-disable */
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;600&display=swap');
+@import "tailwindcss";
 
 @theme {
   --font-romantic: "Dancing Script", cursive;
@@ -218,6 +218,115 @@ body {
   50% {
     transform: translateY(-12px);
   }
+}
+
+/* Party blast cannons — Stage 4 entry celebration */
+.party-blast-layer {
+  perspective: 800px;
+}
+
+.party-cannon {
+  position: absolute;
+  z-index: 45;
+  width: 52px;
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.party-cannon__tube {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: bottom center;
+}
+
+.party-cannon__body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 96px;
+  border-radius: 6px 6px 10px 10px;
+  background: linear-gradient(90deg, #c0392b 0%, #e74c3c 35%, #ff6b6b 50%, #e74c3c 65%, #c0392b 100%);
+  box-shadow:
+    inset -4px 0 8px rgba(0, 0, 0, 0.15),
+    inset 4px 0 8px rgba(255, 255, 255, 0.2),
+    0 8px 20px rgba(231, 76, 60, 0.35);
+}
+
+.party-cannon__body::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 52px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12) 0px,
+    rgba(255, 255, 255, 0.12) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.party-cannon__rim {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 28px;
+  border-radius: 50% 50% 40% 40%;
+  background: linear-gradient(180deg, #ffd700 0%, #ffb347 45%, #daa520 100%);
+  box-shadow:
+    0 2px 6px rgba(218, 165, 32, 0.5),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+}
+
+.party-cannon__rim::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.party-cannon__label {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff 0%, #ffd700 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  z-index: 3;
+}
+
+.party-cannon__burst-flash {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.85) 0%, rgba(255, 91, 147, 0.4) 45%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Responsive Design for NextStage */

@@ -1,12 +1,11 @@
 import { motion } from 'motion/react';
+import { PartyBlastAnimation } from '../components/PartyBlastAnimation';
 
 interface Stage4Props {
   onBack?: () => void;
 }
 
 export const Stage4 = ({ onBack }: Stage4Props) => {
-  const confetti = Array.from({ length: 20 }, (_, i) => i);
-
   return (
     <>
       {/* Hero Content (lower z-index so decorations appear on top) */}
@@ -25,8 +24,7 @@ export const Stage4 = ({ onBack }: Stage4Props) => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="date-pill"
           >
-            {/* Update with dynamic date if needed */}
-            🎉 Special Day 🎉
+            🎉 30/06/2006 🎉
           </motion.div>
           <br />
           <motion.button
@@ -61,26 +59,7 @@ export const Stage4 = ({ onBack }: Stage4Props) => {
         </div>
       </div>
 
-      {/* Confetti/Falling Elements (higher z-index) */}
-      <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden">
-        {confetti.map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: -20, x: Math.random() * 100 - 50 }}
-            animate={{ opacity: [1, 1, 0], y: window.innerHeight + 20, rotate: 360 }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              delay: i * 0.1,
-              repeat: Infinity,
-              ease: 'easeIn',
-            }}
-            className="absolute text-2xl"
-            style={{ left: `${Math.random() * 100}%`, top: `-20px` }}
-          >
-            {['🎉', '✨', '💖', '🎊', '⭐'][i % 5]}
-          </motion.div>
-        ))}
-      </div>
+      <PartyBlastAnimation />
 
       {/* Decorative Background Elements (higher z-index) */}
       <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">

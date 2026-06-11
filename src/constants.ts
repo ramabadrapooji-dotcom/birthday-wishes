@@ -1,3 +1,5 @@
+import loginPhoto from './assets/login_photo.jpg';
+
 export const RECIPIENT_NAME = "Special Someone"; 
 export const MUSIC_URL = "https://www.bensound.com/bensound-music/bensound-love.mp3"; 
 
@@ -19,8 +21,6 @@ export const interactiveMessages = [
   "You are my world 🌍",
   "Forever yours 🌹"
 ];
-
-import loginPhoto from './assets/login_photo.jpg';
 
 export const PHOTO_URL = loginPhoto;
 export const CORRECT_PASSCODE = '3006';
