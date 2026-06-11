@@ -31,3 +31,208 @@ body {
 .markdown-body p {
   @apply mb-4;
 }
+
+/* NextStage Component Styles */
+.hero {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 7%;
+  position: relative;
+  z-index: 10;
+  background: #fdf1f5;
+}
+
+.hero .left {
+  width: 45%;
+  position: relative;
+  z-index: 10;
+}
+
+.hero .left h1 {
+  margin: 0;
+  font-size: 90px;
+  line-height: 0.95;
+  font-weight: 900;
+  color: #ff5b93;
+  text-shadow: 4px 4px 0 #ffb4cc;
+}
+
+.date-pill {
+  display: inline-block;
+  padding: 10px 22px;
+  border-radius: 40px;
+  background: white;
+  border: 2px solid #ffc0d5;
+  color: #ff5b93;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.main-btn {
+  margin-top: 30px;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 40px;
+  background: #ff5b93;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255, 91, 147, 0.35);
+  transition: transform 0.2s;
+}
+
+.main-btn:hover {
+  transform: scale(1.05);
+}
+
+.icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.icons span {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 50%;
+  font-size: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.icons span:hover {
+  transform: scale(1.1);
+}
+
+.hero .right {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.envelope-card {
+  position: relative;
+}
+
+.glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  background: rgba(218, 165, 32, 0.4);
+  filter: blur(40px);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.envelope {
+  position: relative;
+  width: 290px;
+  height: 210px;
+  background: linear-gradient(145deg, #fffdf8, #fff4d4);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(218, 165, 32, 0.2);
+  border: 1px solid rgba(218, 165, 32, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 2;
+  animation: floaty 3s ease-in-out infinite;
+}
+
+.envelope::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #ffe066, #d4af37);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  clip-path: polygon(0 0, 100% 0, 50% 55%);
+  border-radius: 20px;
+}
+
+.heart-seal {
+  position: absolute;
+  top: 70px;
+  font-size: 40px;
+  z-index: 3;
+}
+
+.text {
+  position: relative;
+  z-index: 4;
+  margin-top: 50px;
+  font-weight: 700;
+  font-size: 22px;
+  color: #444;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.name-tag {
+  margin-top: 25px;
+  padding: 10px 30px;
+  background: white;
+  border-radius: 40px;
+  font-weight: 700;
+  color: #ff5b93;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes floaty {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* Responsive Design for NextStage */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    padding: 0 20px;
+    gap: 40px;
+    justify-content: center;
+  }
+
+  .hero .left, .hero .right {
+    width: 100%;
+  }
+
+  .hero .left h1 {
+    font-size: 48px;
+  }
+
+  .envelope {
+    width: 200px;
+    height: 150px;
+  }
+
+  .text {
+    font-size: 16px;
+    margin-top: 30px;
+  }
+
+  .heart-seal {
+    top: 50px;
+    font-size: 28px;
+  }
+}

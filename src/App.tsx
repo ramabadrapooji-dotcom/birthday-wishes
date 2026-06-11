@@ -8,6 +8,7 @@ import { Login } from './components/Login';
 import { Heart } from './components/Heart';
 import { PopEffect } from './components/PopEffect';
 import { BackgroundTwinkle } from './components/BackgroundTwinkle';
+import { Stage4 } from './sections/Stage4';
 
 // Constants & Types
 import { messages, interactiveMessages, MUSIC_URL } from './constants';
@@ -19,6 +20,7 @@ export default function App() {
   const [hasStarted, setHasStarted] = useState(false);
   const [showText, setShowText] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [showStage4, setShowStage4] = useState(false);
   const [key, setKey] = useState(0); 
   const [pops, setPops] = useState<{ id: number; x: number; y: number; message: string }[]>([]);
   const [popIndex, setPopIndex] = useState(0);
@@ -85,7 +87,17 @@ export default function App() {
           <motion.div key="content-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-black z-[50]">
             <BackgroundTwinkle />
             <AnimatePresence mode="wait">
-              {!hasStarted ? (
+              {showStage4 ? (
+                <motion.div
+                  key="stage4-wrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full h-full"
+                >
+                  <Stage4 onBack={() => setShowStage4(false)} />
+                </motion.div>
+              ) : !hasStarted ? (
                 <motion.div
                   key="start-screen"
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -191,6 +203,12 @@ export default function App() {
                           className="flex items-center gap-2 bg-pink-500/20 text-pink-100 px-4 py-2 rounded-xl backdrop-blur-md border border-pink-500/30 hover:bg-pink-500/30 transition-all font-romantic text-xs md:text-lg"
                         >
                           <RotateCcw size={14} /> Watch Again
+                        </button>
+                        <button
+                          onClick={() => setShowStage4(true)}
+                          className="flex items-center gap-2 bg-gradient-to-r from-pink-500/30 to-rose-500/30 text-pink-100 px-4 py-2 rounded-xl backdrop-blur-md border border-pink-400/50 hover:from-pink-500/50 hover:to-rose-500/50 transition-all font-romantic text-xs md:text-lg"
+                        >
+                          Next ✨
                         </button>
                         <button
                           onClick={() => {
