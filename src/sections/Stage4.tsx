@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { PartyBlastAnimation } from '../components/PartyBlastAnimation';
+import { VintageEnvelope } from '../components/VintageEnvelope';
 
 interface Stage4Props {
   onBack?: () => void;
@@ -48,14 +49,7 @@ export const Stage4 = ({ onBack }: Stage4Props) => {
         </div>
 
         <div className="right">
-          <div className="envelope-card">
-            <div className="glow"></div>
-            <div className="envelope">
-              <div className="heart-seal">💖</div>
-              <div className="text" dangerouslySetInnerHTML={{ __html: 'For My<br> Princess<br> Pooji ❤️' }} />
-            </div>
-          </div>
-          <div className="name-tag">♥ Love You So Much ♥</div>
+          <VintageEnvelope />
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 /* stylelint-disable */
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=DM+Sans:wght@400;500;600&family=Inter:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -126,98 +126,165 @@ body {
   z-index: 10;
 }
 
-.envelope-card {
-  position: relative;
+/* Vintage Keepsake Envelope — Stage 4 */
+.vintage-keepsake {
+  background-color: #f5f3ef;
+  background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.glow {
-  position: absolute;
-  width: 280px;
-  height: 280px;
-  background: rgba(218, 165, 32, 0.6);
-  filter: blur(50px);
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: glow-pulse 3s ease-in-out infinite;
-}
-
-@keyframes glow-pulse {
-  0%, 100% {
-    opacity: 0.6;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.15);
-  }
-}
-
-.envelope {
-  position: relative;
-  width: 290px;
-  height: 210px;
-  background: linear-gradient(145deg, #fffdf8, #fff4d4);
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(218, 165, 32, 0.2);
-  border: 1px solid rgba(218, 165, 32, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 2;
-  animation: floaty 3s ease-in-out infinite;
-}
-
-.envelope::before {
-  content: '';
+.vintage-bg-canvas {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #ffe066, #d4af37);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  clip-path: polygon(0 0, 100% 0, 50% 55%);
-  border-radius: 20px;
+  z-index: 0;
+  opacity: 0.4;
+  pointer-events: none;
 }
 
-.heart-seal {
+.vintage-parchment {
+  background-color: #f4ecd8;
+  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+  box-shadow:
+    0 30px 60px -12px rgba(0, 0, 0, 0.25),
+    0 18px 36px -18px rgba(0, 0, 0, 0.3),
+    inset 0 0 100px rgba(166, 138, 86, 0.1);
+  border: 1px solid rgba(166, 138, 86, 0.2);
+}
+
+.vintage-ambient-shadow {
+  filter: drop-shadow(0 45px 65px rgba(0, 0, 0, 0.2));
+}
+
+.vintage-envelope-flap {
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+  background: #ede3cb;
+  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+  z-index: 20;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.vintage-envelope-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.vintage-envelope-container.open .vintage-envelope-flap {
+  transform: rotateX(165deg);
+}
+
+.vintage-floating {
+  animation: vintage-floating 6s ease-in-out infinite;
+}
+
+@keyframes vintage-floating {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+.vintage-brass-clip {
+  width: 28px;
+  height: 60px;
+  border: 3.5px solid #8e7345;
+  border-radius: 14px;
   position: absolute;
-  top: 70px;
-  font-size: 40px;
-  z-index: 3;
+  background: transparent;
+  z-index: 50;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+  transform: rotate(5deg);
 }
 
-.text {
+.vintage-brass-clip::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 3px;
+  right: 3px;
+  bottom: 8px;
+  border: 2.5px solid #a68a56;
+  border-radius: 10px;
+}
+
+.vintage-brass-clip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+}
+
+.vintage-letter-content {
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.vintage-envelope-container.open .vintage-letter-content {
+  opacity: 1;
+  transform: translateY(-20px);
+}
+
+.vintage-wax-seal {
+  width: 54px;
+  height: 54px;
+  background: #963546;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.2);
   position: relative;
-  z-index: 4;
-  margin-top: 50px;
-  font-weight: 700;
-  font-size: 22px;
-  color: #444;
-  text-align: center;
-  line-height: 1.35;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.name-tag {
-  margin-top: 25px;
-  padding: 10px 30px;
-  background: white;
-  border-radius: 40px;
-  font-weight: 700;
-  color: #ff5b93;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.vintage-wax-seal:hover {
+  transform: scale(1.05);
 }
 
-@keyframes floaty {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
+.vintage-wax-seal::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.vintage-script-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  background: linear-gradient(to right, #a68a56, #8e7345);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.vintage-font-headline {
+  font-family: 'Playfair Display', serif;
+}
+
+.vintage-font-body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+.vintage-caption {
+  opacity: 0;
+  animation: vintage-fade-in 2s ease-out forwards;
+}
+
+@keyframes vintage-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Party blast cannons — Stage 4 entry celebration */
@@ -346,18 +413,8 @@ body {
     font-size: 48px;
   }
 
-  .envelope {
-    width: 200px;
-    height: 150px;
-  }
-
-  .text {
-    font-size: 16px;
-    margin-top: 30px;
-  }
-
-  .heart-seal {
-    top: 50px;
-    font-size: 28px;
+  .vintage-keepsake {
+    max-width: 100%;
+    padding: 12px;
   }
 }
