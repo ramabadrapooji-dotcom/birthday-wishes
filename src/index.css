@@ -418,3 +418,215 @@ body {
     padding: 12px;
   }
 }
+
+/* ─── 3D Cake Scene Overlay ─────────────────────────────────────────────── */
+.cake-scene-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: radial-gradient(ellipse at center, #1a0510 0%, #000 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cake-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+  inset: 0;
+}
+
+/* Back button — matches main-btn style */
+.cake-back-btn {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 210;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 40px;
+  background: #ff5b93;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255, 91, 147, 0.35);
+  transition: transform 0.2s;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.cake-back-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Blow candles button */
+.cake-blow-btn {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 210;
+  border: none;
+  padding: 14px 36px;
+  border-radius: 40px;
+  background: linear-gradient(135deg, #ff5b93, #ff4b82);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(255, 91, 147, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: Inter, system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+.cake-blow-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Blow hint text */
+.cake-blow-hint {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 210;
+  color: rgba(255, 180, 204, 0.85);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  font-family: Inter, system-ui, sans-serif;
+  pointer-events: none;
+}
+
+/* Make a wish message */
+.cake-blown-msg {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 210;
+  color: #ffd700;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  white-space: nowrap;
+  font-family: Inter, system-ui, sans-serif;
+  pointer-events: none;
+}
+
+/* Loading fallback */
+.cake-scene-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ff9ebf;
+  gap: 12px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.cake-scene-loader__heart {
+  font-size: 48px;
+  animation: vintage-floating 2s ease-in-out infinite;
+}
+
+.cake-scene-loader p {
+  font-size: 14px;
+  opacity: 0.7;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ─── Surprise Overlay ─────────────────────────────────────────────── */
+.surprise-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 250; /* Above canvas and buttons */
+  background: rgba(10, 2, 5, 0.75); /* Dark semi-transparent background to make text pop */
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 15vh;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+.glowing-text-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.glow-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.glow-char {
+  display: inline-block;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 6vw, 64px);
+  font-weight: 600;
+  color: #FFDF00;
+  letter-spacing: 2px;
+}
+
+.glow-heart {
+  display: inline-block;
+  font-size: clamp(32px, 6vw, 64px);
+  margin-left: 8px;
+}
+
+.long-message-container {
+  margin-top: 60px;
+  max-width: 800px;
+  padding: 40px;
+  background: linear-gradient(145deg, rgba(30, 5, 15, 0.8), rgba(15, 2, 8, 0.9));
+  border: 1px solid rgba(255, 91, 147, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 0 40px rgba(255, 91, 147, 0.15), inset 0 0 20px rgba(255, 215, 0, 0.05);
+  margin-bottom: 100px;
+}
+
+.message-text {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.8;
+  color: #FFF5F7;
+  text-align: center;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+@keyframes meteor {
+  0% { transform: translate(0, 0) rotate(-45deg); opacity: 0; }
+  10% { opacity: 1; }
+  20% { transform: translate(-1000px, 1000px) rotate(-45deg); opacity: 0; }
+  100% { transform: translate(-1000px, 1000px) rotate(-45deg); opacity: 0; }
+}
+
+.meteor {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8), 0 0 20px 2px rgba(255, 105, 180, 0.5);
+  animation: meteor linear infinite;
+  animation-fill-mode: both;
+  transform: rotate(-45deg);
+  z-index: -1;
+}
+

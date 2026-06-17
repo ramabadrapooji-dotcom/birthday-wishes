@@ -1,13 +1,21 @@
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useState } from 'react';
 import { PartyBlastAnimation } from '../components/PartyBlastAnimation';
 import { VintageEnvelope } from '../components/VintageEnvelope';
+import { CakeScene } from '../components/CakeScene';
 
 interface Stage4Props {
   onBack?: () => void;
 }
 
 export const Stage4 = ({ onBack }: Stage4Props) => {
+  const [showCake, setShowCake] = useState(false);
+
   return (
+    <AnimatePresence mode="wait">
+    {showCake ? (
+      <CakeScene onBack={() => setShowCake(false)} />
+    ) : (
     <>
       {/* Hero Content (lower z-index so decorations appear on top) */}
       <div className="hero relative z-10">
@@ -43,7 +51,11 @@ export const Stage4 = ({ onBack }: Stage4Props) => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="icons"
           >
-            <span>🎂</span>
+            <span
+              onClick={() => setShowCake(true)}
+              title="Open 3D Birthday Cake 🎂"
+              style={{ cursor: 'pointer' }}
+            >🎂</span>
             <span>🎁</span>
           </motion.div>
         </div>
@@ -170,5 +182,7 @@ export const Stage4 = ({ onBack }: Stage4Props) => {
         Made with ❤️ for you
       </div>
     </>
+    )}
+    </AnimatePresence>
   );
 };
