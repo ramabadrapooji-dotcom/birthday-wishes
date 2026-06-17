@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Environment, ContactShadows, PresentationControls, Float, Sparkles, useProgress } from '@react-three/drei';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import * as THREE from 'three';
 import { Cake } from './Cake3D';
@@ -490,6 +490,18 @@ export const CakeScene = ({ onBack }: CakeSceneProps) => {
             {showScript && (
               <div className="flex flex-col items-center z-10 relative px-4 w-full max-w-3xl max-h-[50vh] overflow-y-auto pointer-events-auto pb-12 overscroll-contain">
                 <Typewriter text={TYPEWRITER_TEXT} />
+                <motion.button
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
+                  onClick={() => {
+                    setStep('intro');
+                    setShowScript(false);
+                  }}
+                  className="mt-12 pointer-events-auto px-8 py-3 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md border border-white/20 rounded-full text-rose-100 transition-all font-sans text-lg tracking-wider hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                >
+                  Return to Cake
+                </motion.button>
               </div>
             )}
           </motion.div>
