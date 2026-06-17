@@ -1,6 +1,6 @@
 import { Heart } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
-import { PHOTO_URL } from '../constants';
+import { ENVELOPE_COVER_URL } from '../constants';
 import { HeartParticleCanvas } from './HeartParticleCanvas';
 
 export const VintageEnvelope = () => {
@@ -76,7 +76,7 @@ export const VintageEnvelope = () => {
             <img
               alt="Our Love"
               className="w-full h-full object-cover mix-blend-multiply opacity-90"
-              src={PHOTO_URL}
+              src={ENVELOPE_COVER_URL}
               draggable={false}
             />
             <div className="absolute inset-0 bg-[#a68a56]/10 mix-blend-overlay" />
