@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { RotateCcw, Volume2, VolumeX } from 'lucide-react';
+import { Canvas } from '@react-three/fiber';
+import { Cake } from './components/Cake3D';
 
 // Components
 import { EntryPage } from './components/EntryPage';
@@ -9,9 +11,11 @@ import { Heart } from './components/Heart';
 import { PopEffect } from './components/PopEffect';
 import { BackgroundTwinkle } from './components/BackgroundTwinkle';
 import { Stage4 } from './sections/Stage4';
+import Stage5 from './sections/Stage5';
+import Stage6 from './sections/Stage6';
 
 // Constants & Types
-import { messages, interactiveMessages, MUSIC_URL } from './constants';
+import { messages, interactiveMessages, MUSIC_URL, ENVELOPE_COVER_URL, PHOTO_URL } from './constants';
 import { generateHeartsData } from './services/heartService';
 
 export default function App() {
@@ -21,11 +25,62 @@ export default function App() {
   const [showText, setShowText] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [showStage4, setShowStage4] = useState(false);
+  const [showStage5, setShowStage5] = useState(false);
+  const [showStage6, setShowStage6] = useState(false);
   const [key, setKey] = useState(0); 
   const [pops, setPops] = useState<{ id: number; x: number; y: number; message: string }[]>([]);
   const [popIndex, setPopIndex] = useState(0);
 
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  // Background Preloader for all heavy assets
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // 1. Preload general images (photos & stickers)
+      const imagesToPreload = [
+        PHOTO_URL,
+        ENVELOPE_COVER_URL,
+        'https://media.tenor.com/qUZZxO1HUPcAAAAi/mocha-bear-hearts.gif',
+      ];
+
+      // Add Stage 5 reaction GIFs (both assets folder and public folder paths)
+      for (let i = 0; i <= 7; i++) {
+        try {
+          imagesToPreload.push(new URL(`./assets/reaction-${i}.gif`, import.meta.url).href);
+        } catch {}
+        imagesToPreload.push(`/reaction-${i}.gif`);
+      }
+
+      // Add Stage 5 celebration GIFs
+      try {
+        imagesToPreload.push(new URL('./assets/celebration.gif', import.meta.url).href);
+      } catch {}
+      imagesToPreload.push('/celebration.gif');
+
+      // Add Stage 6 puzzle photo
+      try {
+        imagesToPreload.push(new URL('./assets/puzzle-photo.jpg', import.meta.url).href);
+      } catch {}
+      imagesToPreload.push('/puzzle-photo.jpg');
+
+      // Trigger standard Image loads (caching in browser memory/HTTP cache)
+      imagesToPreload.forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
+
+      // 2. Preload Audio/Music file
+      const audio = new Audio();
+      audio.src = MUSIC_URL;
+
+      // 3. Preload 3D Font JSON file via fetch (cached by browser)
+      fetch('https://unpkg.com/three@0.77.0/examples/fonts/optimer_bold.typeface.json')
+        .catch(err => console.log('Font preload skipped/offline:', err));
+
+    }, 1200); // 1.2s delay to prioritize critical landing page assets
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const startExperience = () => {
     setHasStarted(true);
@@ -87,7 +142,27 @@ export default function App() {
           <motion.div key="content-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-black z-[50]">
             <BackgroundTwinkle />
             <AnimatePresence mode="wait">
-              {showStage4 ? (
+              {showStage6 ? (
+                <motion.div
+                  key="stage6-wrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full h-full"
+                >
+                  <Stage6 onBack={() => setShowStage6(false)} />
+                </motion.div>
+              ) : showStage5 ? (
+                <motion.div
+                  key="stage5-wrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full h-full"
+                >
+                  <Stage5 onNext={() => setShowStage6(true)} />
+                </motion.div>
+              ) : showStage4 ? (
                 <motion.div
                   key="stage4-wrap"
                   initial={{ opacity: 0 }}
@@ -95,7 +170,7 @@ export default function App() {
                   exit={{ opacity: 0 }}
                   className="w-full h-full"
                 >
-                  <Stage4 onBack={() => setShowStage4(false)} />
+                  <Stage4 onBack={() => setShowStage4(false)} onNext={() => setShowStage5(true)} />
                 </motion.div>
               ) : !hasStarted ? (
                 <motion.div
@@ -245,6 +320,17 @@ export default function App() {
           className="fixed inset-0 pointer-events-none opacity-60 z-0" 
           style={{ background: 'radial-gradient(circle at center, rgba(131, 24, 67, 0.2) 0%, #000 80%)' }}
         />
+      )}
+
+      {/* Hidden WebGL Pre-Compiler / Shader Pre-Loader */}
+      {hasStarted && !showStage4 && (
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '1px', height: '1px', opacity: 0.01, pointerEvents: 'none', overflow: 'hidden', zIndex: -100 }}>
+          <Canvas camera={{ position: [0, 2, 9], fov: 45 }} shadows dpr={1}>
+            <ambientLight intensity={0.5} color="#FFD1E0" />
+            <directionalLight position={[8, 10, 5]} intensity={1.5} color="#FFEAC2" />
+            <Cake isBlowing={false} isBlownOut={false} name="pooji" />
+          </Canvas>
+        </div>
       )}
     </main>
   );

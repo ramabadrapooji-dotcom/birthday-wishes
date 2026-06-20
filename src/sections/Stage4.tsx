@@ -6,9 +6,10 @@ import { CakeScene } from '../components/CakeScene';
 
 interface Stage4Props {
   onBack?: () => void;
+  onNext?: () => void;
 }
 
-export const Stage4 = ({ onBack }: Stage4Props) => {
+export const Stage4 = ({ onBack, onNext }: Stage4Props) => {
   const [showCake, setShowCake] = useState(false);
 
   return (
@@ -45,6 +46,18 @@ export const Stage4 = ({ onBack }: Stage4Props) => {
           >
             {onBack ? '← Back' : 'Close'}
           </motion.button>
+          {onNext && (
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.55 }}
+              className="main-btn"
+              style={{ background: 'linear-gradient(135deg, #e91e63, #ff5b93)', marginLeft: '10px' }}
+              onClick={onNext}
+            >
+              Next Stage 💌
+            </motion.button>
+          )}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
