@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FloatingHearts } from './FloatingHearts';
 import { BackgroundTwinkle } from './BackgroundTwinkle';
 import { PHOTO_URL, CORRECT_PASSCODE } from '../constants';
@@ -30,14 +30,30 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
   const [hint, setHint] = useState('');
   const [imgError, setImgError] = useState(false);
 
-  const handleInput = (val: string) => {
+  const handleInput = useCallback((val: string) => {
     // Use functional update to avoid race conditions on very rapid clicks
     setPasscode(prev => (prev.length < 4 ? prev + val : prev));
-  };
+  }, []);
 
-  const handleBackspace = () => {
+  const handleBackspace = useCallback(() => {
     setPasscode(prev => prev.slice(0, -1));
-  };
+  }, []);
+
+  // Listen to desktop keyboard input
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Backspace') {
+        handleBackspace();
+      } else if (/^[0-9]$/.test(e.key)) {
+        handleInput(e.key);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleInput, handleBackspace]);
 
   useEffect(() => {
     if (passcode.length === 4) {
