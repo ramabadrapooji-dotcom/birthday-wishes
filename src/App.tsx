@@ -160,7 +160,7 @@ export default function App() {
                   exit={{ opacity: 0 }}
                   className="w-full h-full"
                 >
-                  <Stage5 onNext={() => setShowStage6(true)} />
+                  <Stage5 onNext={() => setShowStage6(true)} onBack={() => setShowStage5(false)} />
                 </motion.div>
               ) : showStage4 ? (
                 <motion.div

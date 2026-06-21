@@ -113,7 +113,7 @@ const TypewriterText = ({ text, className, onComplete }: { text: string, classNa
   );
 };
 
-export default function Stage5({ onNext }: { onNext?: () => void }) {
+export default function Stage5({ onNext, onBack }: { onNext?: () => void; onBack?: () => void }) {
   const [yesClicked, setYesClicked] = useState(false);
   const [teaseCount, setTeaseCount] = useState(0);
   const [noPosition, setNoPosition] = useState({ x: 0, y: 0 });
@@ -187,6 +187,20 @@ export default function Stage5({ onNext }: { onNext?: () => void }) {
       {!yesClicked && <PremiumVFX />}
       
       <StickerContainer />
+
+      {onBack && (
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onBack}
+          className="absolute top-6 left-6 md:top-10 md:left-10 z-[120] px-5 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 backdrop-blur-md text-[#e91e63] border border-rose-300/40 rounded-full shadow-sm transition-all font-medium flex items-center gap-2 cursor-pointer"
+        >
+          <Heart className="w-4 h-4 fill-[#e91e63] text-[#e91e63] animate-pulse" />
+          <span className="font-cursive text-sm md:text-base">Back</span>
+        </motion.button>
+      )}
 
       {!yesClicked ? (
         <div className="flex flex-col items-center justify-center p-4 z-10 w-full max-w-2xl mx-auto min-h-full">

@@ -147,7 +147,7 @@ export default function Stage6({ onBack }: { onBack?: () => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-red-900 via-[#8a0f2b] to-rose-950 p-4 font-sans relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-red-900 via-[#8a0f2b] to-rose-950 p-4 py-12 font-sans relative overflow-y-auto overflow-x-hidden w-full h-full">
       {/* Cinematic Ethereal Glows */}
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.4, 0.3], rotate: [0, 45, 0] }} 
@@ -204,7 +204,8 @@ export default function Stage6({ onBack }: { onBack?: () => void }) {
         <div 
           className="relative bg-white/10 backdrop-blur-md p-3 md:p-4 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.2)] w-full border border-white/20"
           style={{ 
-            maxWidth: '400px',
+            maxWidth: '380px',
+            maxHeight: '55vh',
             aspectRatio: aspectRatio
           }}
         >
