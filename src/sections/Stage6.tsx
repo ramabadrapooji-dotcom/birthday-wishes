@@ -236,13 +236,12 @@ export default function Stage6({ onBack }: { onBack?: () => void }) {
                   } ${(isSolved || !hasStarted) ? 'rounded-none border-0' : 'rounded-[4px] overflow-hidden bg-white/50 shadow-sm border border-white/30 hover:border-white/80 hover:shadow-md transition-shadow'}`}
                 >
                   <div 
-                    className="absolute inset-[1px] w-[calc(300%+4px)] h-[calc(300%+4px)]"
+                    className="absolute inset-[1px]"
                     style={{
                       backgroundImage: `url(${imageUrl})`,
-                      backgroundSize: '100% 100%',
+                      backgroundSize: `${GRID_SIZE * 100}% ${GRID_SIZE * 100}%`,
                       backgroundPosition: `${(col / (GRID_SIZE - 1)) * 100}% ${(row / (GRID_SIZE - 1)) * 100}%`,
                       opacity: isEmptyAndNotSolved ? 0 : 1,
-                      transform: 'translate(-1px, -1px)'
                     }}
                   />
                   {(!isSolved && hasStarted && !isLastTile) && (
