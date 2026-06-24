@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { PartyBlastAnimation } from '../components/PartyBlastAnimation';
 import { VintageEnvelope } from '../components/VintageEnvelope';
 import { CakeScene } from '../components/CakeScene';
+import { ScratchCardModal } from '../components/ScratchCardModal';
 
 interface Stage4Props {
   onBack?: () => void;
@@ -11,6 +12,7 @@ interface Stage4Props {
 
 export const Stage4 = ({ onBack, onNext }: Stage4Props) => {
   const [showCake, setShowCake] = useState(false);
+  const [showGift, setShowGift] = useState(false);
 
   return (
     <AnimatePresence mode="wait">
@@ -69,7 +71,21 @@ export const Stage4 = ({ onBack, onNext }: Stage4Props) => {
               title="Open 3D Birthday Cake 🎂"
               style={{ cursor: 'pointer' }}
             >🎂</span>
-            <span>🎁</span>
+            <motion.span
+              onClick={() => setShowGift(true)}
+              title="Open Your Gift 🎁"
+              style={{ cursor: 'pointer', display: 'inline-block' }}
+              whileHover={{ scale: 1.3, rotate: [-5, 5, -5, 0] }}
+              whileTap={{ scale: 0.85 }}
+              animate={{
+                y: [0, -6, 0],
+                rotate: [0, -3, 3, 0],
+              }}
+              transition={{
+                y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
+                rotate: { duration: 2.2, repeat: Infinity, ease: 'easeInOut' },
+              }}
+            >🎁</motion.span>
           </motion.div>
         </div>
 
@@ -79,6 +95,9 @@ export const Stage4 = ({ onBack, onNext }: Stage4Props) => {
       </div>
 
       <PartyBlastAnimation />
+
+      {/* Scratch Card Gift Modal */}
+      <ScratchCardModal isOpen={showGift} onClose={() => setShowGift(false)} />
 
       {/* Decorative Background Elements (higher z-index) */}
       <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">
