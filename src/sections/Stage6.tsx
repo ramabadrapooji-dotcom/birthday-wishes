@@ -262,29 +262,33 @@ export default function Stage6({ onBack, onNext }: { onBack?: () => void, onNext
             >
               Start Puzzle
             </button>
-          ) : !isSolved ? (
-            <button
-              onClick={initializePuzzle}
-              className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full shadow transition-all border border-white/40"
-            >
-              Shuffle Again
-            </button>
           ) : (
-            <motion.div 
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', bounce: 0.5 }}
-              className="flex flex-col items-center mt-4 gap-6"
-            >
-              <div className="flex flex-col items-center">
-                <Heart className="w-16 h-16 text-yellow-300 fill-yellow-300 mb-4 animate-pulse drop-shadow-[0_0_15px_rgba(253,224,71,0.6)]" />
-                <p className="text-xl md:text-2xl font-cursive font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center">
-                  Every piece of my heart belongs to you!
-                </p>
-              </div>
+            <div className="flex flex-col items-center gap-6">
+              {!isSolved ? (
+                <button
+                  onClick={initializePuzzle}
+                  className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full shadow transition-all border border-white/40"
+                >
+                  Shuffle Again
+                </button>
+              ) : (
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', bounce: 0.5 }}
+                  className="flex flex-col items-center gap-4"
+                >
+                  <Heart className="w-16 h-16 text-yellow-300 fill-yellow-300 animate-pulse drop-shadow-[0_0_15px_rgba(253,224,71,0.6)]" />
+                  <p className="text-xl md:text-2xl font-cursive font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center">
+                    Every piece of my heart belongs to you!
+                  </p>
+                </motion.div>
+              )}
               
               {onNext && (
                 <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={onNext}
@@ -293,7 +297,7 @@ export default function Stage6({ onBack, onNext }: { onBack?: () => void, onNext
                   Ready for Music 🎶
                 </motion.button>
               )}
-            </motion.div>
+            </div>
           )}
 
           {imageError && (
