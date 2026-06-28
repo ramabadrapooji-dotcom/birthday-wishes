@@ -30,7 +30,7 @@ const isSolvable = (puzzle: number[]) => {
   return inversions % 2 === 0;
 };
 
-export default function Stage6({ onBack }: { onBack?: () => void }) {
+export default function Stage6({ onBack, onNext }: { onBack?: () => void, onNext?: () => void }) {
   const [tiles, setTiles] = useState<number[]>([]);
   const [isSolved, setIsSolved] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
@@ -147,7 +147,7 @@ export default function Stage6({ onBack }: { onBack?: () => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-red-900 via-[#8a0f2b] to-rose-950 p-4 py-12 font-sans relative overflow-y-auto overflow-x-hidden w-full h-full">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-red-900 via-[#8a0f2b] to-rose-950 p-4 py-12 pb-32 font-sans relative overflow-y-auto overflow-x-hidden w-full h-full">
       {/* Cinematic Ethereal Glows */}
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.4, 0.3], rotate: [0, 45, 0] }} 
@@ -274,12 +274,25 @@ export default function Stage6({ onBack }: { onBack?: () => void }) {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: 'spring', bounce: 0.5 }}
-              className="flex flex-col items-center mt-4"
+              className="flex flex-col items-center mt-4 gap-6"
             >
-              <Heart className="w-16 h-16 text-yellow-300 fill-yellow-300 mb-4 animate-pulse drop-shadow-[0_0_15px_rgba(253,224,71,0.6)]" />
-              <p className="text-xl md:text-2xl font-cursive font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center">
-                Every piece of my heart belongs to you!
-              </p>
+              <div className="flex flex-col items-center">
+                <Heart className="w-16 h-16 text-yellow-300 fill-yellow-300 mb-4 animate-pulse drop-shadow-[0_0_15px_rgba(253,224,71,0.6)]" />
+                <p className="text-xl md:text-2xl font-cursive font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center">
+                  Every piece of my heart belongs to you!
+                </p>
+              </div>
+              
+              {onNext && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onNext}
+                  className="px-8 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-full shadow-[0_0_20px_rgba(236,72,153,0.5)] hover:shadow-[0_0_30px_rgba(236,72,153,0.8)] transition-all flex items-center gap-2"
+                >
+                  Ready for Music 🎶
+                </motion.button>
+              )}
             </motion.div>
           )}
 

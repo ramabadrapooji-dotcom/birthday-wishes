@@ -13,6 +13,7 @@ import { BackgroundTwinkle } from './components/BackgroundTwinkle';
 import { Stage4 } from './sections/Stage4';
 import Stage5 from './sections/Stage5';
 import Stage6 from './sections/Stage6';
+import { Stage6MusicPlayer as Stage7 } from './components/Stage6MusicPlayer';
 
 // Constants & Types
 import { messages, interactiveMessages, MUSIC_URL, ENVELOPE_COVER_URL, PHOTO_URL } from './constants';
@@ -27,6 +28,7 @@ export default function App() {
   const [showStage4, setShowStage4] = useState(false);
   const [showStage5, setShowStage5] = useState(false);
   const [showStage6, setShowStage6] = useState(false);
+  const [showStage7, setShowStage7] = useState(false);
   const [key, setKey] = useState(0); 
   const [pops, setPops] = useState<{ id: number; x: number; y: number; message: string }[]>([]);
   const [popIndex, setPopIndex] = useState(0);
@@ -72,6 +74,37 @@ export default function App() {
       // 2. Preload Audio/Music file
       const audio = new Audio();
       audio.src = MUSIC_URL;
+
+      // Preload Stage 7 playlist music in background
+      const getAssetUrl = (filename: string) => {
+        try {
+          return new URL(`./assets/${filename}`, import.meta.url).href;
+        } catch {
+          return `/assets/${filename}`;
+        }
+      };
+
+      const stage7Playlist = [
+        getAssetUrl('song1.mp3'),
+        getAssetUrl('song2.mp3'),
+        getAssetUrl('song3.mp3'),
+        getAssetUrl('song4.mp3'),
+        getAssetUrl('song5.mp3'),
+        getAssetUrl('song6.mp3'),
+        getAssetUrl('song7.mp3'),
+        getAssetUrl('song8.mp3'),
+        getAssetUrl('song9.mp3'),
+        getAssetUrl('song10.mp3'),
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+      ];
+      stage7Playlist.forEach(src => {
+        const a = new Audio();
+        a.src = src;
+        a.preload = 'auto';
+      });
 
       // 3. Preload 3D Font JSON file via fetch (cached by browser)
       fetch('https://unpkg.com/three@0.77.0/examples/fonts/optimer_bold.typeface.json')
@@ -142,7 +175,17 @@ export default function App() {
           <motion.div key="content-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-black z-[50]">
             <BackgroundTwinkle />
             <AnimatePresence mode="wait">
-              {showStage6 ? (
+              {showStage7 ? (
+                <motion.div
+                  key="stage7-wrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full h-full"
+                >
+                  <Stage7 onBack={() => setShowStage7(false)} />
+                </motion.div>
+              ) : showStage6 ? (
                 <motion.div
                   key="stage6-wrap"
                   initial={{ opacity: 0 }}
@@ -150,7 +193,7 @@ export default function App() {
                   exit={{ opacity: 0 }}
                   className="w-full h-full"
                 >
-                  <Stage6 onBack={() => setShowStage6(false)} />
+                  <Stage6 onNext={() => setShowStage7(true)} onBack={() => setShowStage6(false)} />
                 </motion.div>
               ) : showStage5 ? (
                 <motion.div

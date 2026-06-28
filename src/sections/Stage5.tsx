@@ -195,10 +195,10 @@ export default function Stage5({ onNext, onBack }: { onNext?: () => void; onBack
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onBack}
-          className="absolute top-6 left-6 md:top-10 md:left-10 z-[120] px-5 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 backdrop-blur-md text-[#e91e63] border border-rose-300/40 rounded-full shadow-sm transition-all font-medium flex items-center gap-2 cursor-pointer"
+          className="absolute top-6 left-6 md:top-10 md:left-10 z-[120] px-6 py-3 bg-gradient-to-r from-pink-500/80 to-rose-500/80 hover:from-pink-500 hover:to-rose-500 backdrop-blur-md text-white border border-pink-300/50 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.5)] transition-all font-medium flex items-center gap-2 cursor-pointer"
         >
-          <Heart className="w-4 h-4 fill-[#e91e63] text-[#e91e63] animate-pulse" />
-          <span className="font-cursive text-sm md:text-base">Back</span>
+          <Heart className="w-5 h-5 fill-white text-white animate-pulse" />
+          <span className="font-cursive text-sm md:text-base font-bold tracking-wide">Back to Gift 💝</span>
         </motion.button>
       )}
 
