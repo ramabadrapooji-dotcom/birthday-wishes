@@ -14,6 +14,7 @@ import { Stage4 } from './sections/Stage4';
 import Stage5 from './sections/Stage5';
 import Stage6 from './sections/Stage6';
 import { Stage6MusicPlayer as Stage7 } from './components/Stage6MusicPlayer';
+import { Stage8Magazine } from './components/Stage8Magazine';
 
 // Constants & Types
 import { messages, interactiveMessages, MUSIC_URL, ENVELOPE_COVER_URL, PHOTO_URL } from './constants';
@@ -29,6 +30,7 @@ export default function App() {
   const [showStage5, setShowStage5] = useState(false);
   const [showStage6, setShowStage6] = useState(false);
   const [showStage7, setShowStage7] = useState(false);
+  const [showStage8, setShowStage8] = useState(false);
   const [key, setKey] = useState(0); 
   const [pops, setPops] = useState<{ id: number; x: number; y: number; message: string }[]>([]);
   const [popIndex, setPopIndex] = useState(0);
@@ -57,7 +59,21 @@ export default function App() {
       try {
         imagesToPreload.push(new URL('./assets/celebration.gif', import.meta.url).href);
       } catch {}
-      imagesToPreload.push('/celebration.gif');
+      imagesToPreload.push(`/celebration.gif`);
+
+      // Add Stage 8 Magazine Photos
+      const magPhotos = ['frontcover.jpg', 'backcover.jpg', 'bg-p3.jpg', 'photo-inside-bg-1.jpg', 'photo-inside-bg-2.jpg'];
+      for (let i = 1; i <= 27; i++) {
+        const ext = (i === 26 || i === 27) ? 'jpeg' : 'jpg';
+        magPhotos.push(`photo-p${i}.${ext}`);
+      }
+      
+      magPhotos.forEach(photo => {
+        try {
+          imagesToPreload.push(new URL(`./assets/${photo}`, import.meta.url).href);
+        } catch {}
+        imagesToPreload.push(`/magazine-photos/${photo}`);
+      });
 
       // Add Stage 6 puzzle photo
       try {
@@ -175,7 +191,17 @@ export default function App() {
           <motion.div key="content-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-black z-[50]">
             <BackgroundTwinkle />
             <AnimatePresence mode="wait">
-              {showStage7 ? (
+              {showStage8 ? (
+                <motion.div
+                  key="stage8-wrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full h-full"
+                >
+                  <Stage8Magazine onBack={() => setShowStage8(false)} />
+                </motion.div>
+              ) : showStage7 ? (
                 <motion.div
                   key="stage7-wrap"
                   initial={{ opacity: 0 }}
@@ -183,7 +209,7 @@ export default function App() {
                   exit={{ opacity: 0 }}
                   className="w-full h-full"
                 >
-                  <Stage7 onBack={() => setShowStage7(false)} />
+                  <Stage7 onBack={() => setShowStage7(false)} onNext={() => setShowStage8(true)} />
                 </motion.div>
               ) : showStage6 ? (
                 <motion.div

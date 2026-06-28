@@ -44,7 +44,7 @@ const PARTICLES = Array.from({ length: 30 }).map((_, i) => ({
   delay: Math.random() * 5,
 }));
 
-export function Stage6MusicPlayer({ onBack }: { onBack?: () => void }) {
+export function Stage6MusicPlayer({ onBack, onNext }: { onBack?: () => void, onNext?: () => void }) {
   const [playlist, setPlaylist] = useState<Track[]>(DEFAULT_PLAYLIST);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -300,12 +300,22 @@ export function Stage6MusicPlayer({ onBack }: { onBack?: () => void }) {
           animate={{ opacity: 1, y: 0 }}
           className="flex justify-between items-center mb-1 lg:mb-6 shrink-0 pointer-events-auto"
         >
-          <button 
-            onClick={onBack}
-            className="p-2 sm:p-3 -ml-2 sm:-ml-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm group"
-          >
-            <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7 text-gray-200 group-hover:-translate-x-1 transition-transform" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={onBack}
+              className="p-2 sm:p-3 -ml-2 sm:-ml-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm group"
+            >
+              <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7 text-gray-200 group-hover:-translate-x-1 transition-transform" />
+            </button>
+            {onNext && (
+              <button
+                onClick={onNext}
+                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-pink-600/80 to-purple-600/80 hover:from-pink-500 hover:to-purple-500 rounded-full text-xs sm:text-sm font-semibold shadow-[0_0_15px_rgba(236,72,153,0.4)] backdrop-blur-md transition-all hover:scale-105"
+              >
+                Excited for next surprise?
+              </button>
+            )}
+          </div>
           <div className="text-center flex flex-col">
             <span className="text-[10px] text-pink-400 font-bold tracking-[0.2em] uppercase mb-0.5">Chapter VI</span>
             <h1 className="text-xs sm:text-sm font-semibold tracking-widest text-gray-200 uppercase letter-spacing-2">Unforgettable</h1>
