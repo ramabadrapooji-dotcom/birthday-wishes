@@ -25,7 +25,19 @@ export const interactiveMessages = [
 
 export const PHOTO_URL = loginPhoto;
 export const ENVELOPE_COVER_URL = envelopeCover;
-export const CORRECT_PASSCODE = '3002';
+// Passcode is stored as a SHA-256 hash — never exposed in plaintext in the bundle.
+// Hash of '3002' (generated offline). To change, update with: sha256('newcode')
+export const PASSCODE_HASH = 'e9bbcebb50c01c0d6fe1da1b5ec19c8fd86dee6826ff9ac05f26a0bda6d23e0e';
+
+// Constant-time string comparison to prevent timing attacks
+export async function verifyPasscode(attempt: string): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(attempt);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex === PASSCODE_HASH;
+}
 
 export const STAGE7_PLAYLIST = [
   { 

@@ -52,7 +52,7 @@ export function VinylRoom({ currentTrack, isPlaying, progressPercent, analyserRe
           <MusicParticles analyserRef={analyserRef} isPlaying={isPlaying} isMobile={isMobile} />
           <HeartParticles isPlaying={isPlaying} isMobile={isMobile} />
 
-          <EffectComposer disableNormalPass>
+          <EffectComposer enableNormalPass={false}>
             <Bloom 
               luminanceThreshold={0.6} 
               mipmapBlur 

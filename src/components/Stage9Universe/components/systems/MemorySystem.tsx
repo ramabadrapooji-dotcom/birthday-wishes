@@ -1,5 +1,5 @@
-import { useFrame, useLoader } from '@react-three/fiber';
-import { useRef, useMemo, useState } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { useRef, useMemo, useState, Suspense } from 'react';
 import * as THREE from 'three';
 import { useAppStore, MemoryData } from '../../store/useAppStore';
 import { memoriesData } from '../../data/memories';
@@ -94,19 +94,22 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
   // Ref for the glass frame material to adjust emissive lighting during transitions
   const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
   
-  // Load texture
-  const texture = useLoader(THREE.TextureLoader, memory.imageUrl);
+  // Load texture via useTexture (suspense-based, no cyan fallback)
+  const texture = useTexture(memory.imageUrl);
   useMemo(() => {
+    if (!texture) return;
     texture.generateMipmaps = true;
     texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
-    texture.anisotropy = 16;
+    // Limit anisotropy to 4 on mobile to prevent context loss
+    texture.anisotropy = Math.min(4, 4);
     texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
   }, [texture]);
 
   // Object-fit: cover logic
   const planeAspect = 4 / 3;
-  const imageAspect = texture.image ? texture.image.width / texture.image.height : 1;
+  const imageAspect = texture.image ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height : 1;
   
   const uvScale = useMemo(() => {
     if (imageAspect > planeAspect) {
@@ -119,11 +122,18 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
   }, [imageAspect, planeAspect]);
   
   const uvOffset = useMemo(() => {
-    // For portrait/tall photos, perfectly align to the top center (1.0) so heads aren't cut off.
-    // In THREE WebGL coordinates, V=1 is the top. So offset = 1 - scale.y (align top).
-    const yOffset = imageAspect < planeAspect ? (1 - uvScale.y) * 1.0 : (1 - uvScale.y) / 2;
-    return new THREE.Vector2((1 - uvScale.x) / 2, yOffset);
-  }, [uvScale, imageAspect, planeAspect]);
+    if (!texture) return new THREE.Vector2(0, 0);
+    // For portrait/tall photos: align to top center (heads first)
+    // For landscape/wide photos: align to center so faces are centered
+    if (imageAspect < planeAspect) {
+      // Portrait: top-align
+      const yOffset = (1 - uvScale.y) * 1.0;
+      return new THREE.Vector2((1 - uvScale.x) / 2, yOffset);
+    } else {
+      // Landscape (like mem2, mem7): center crop - exact center
+      return new THREE.Vector2((1 - uvScale.x) / 2, (1 - uvScale.y) / 2);
+    }
+  }, [uvScale, imageAspect, planeAspect, texture]);
 
   const isSelected = selectedMemory?.id === memory.id;
   const isHidden = appState === 'MEMORY_FOCUS' && !isSelected;
@@ -205,51 +215,38 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
       visible={!isHidden}
     >
       <group ref={photoGroupRef}>
-        {/* Premium Glass Frame */}
+        {/* Premium Glass Frame — simplified for mobile stability */}
         <mesh position={[0, 0, -0.05]}>
           <boxGeometry args={[4.2, 3.2, 0.05]} />
-          <meshPhysicalMaterial 
-            ref={materialRef}
-            color="#ffffff"
-            metalness={0.1}
-            roughness={0.05}
-            transmission={1.0}
-            thickness={0.5}
-            ior={1.5}
+          <meshStandardMaterial 
+            ref={materialRef as any}
+            color="#ccccff"
+            metalness={0.3}
+            roughness={0.1}
             emissive={hovered ? "#332211" : "#000000"}
-            clearcoat={1.0}
-            clearcoatRoughness={0.1}
+            emissiveIntensity={0.1}
+            transparent
+            opacity={0.15}
           />
         </mesh>
         
-        {/* Photo Plane */}
+        {/* Photo Plane — using meshBasicMaterial for mobile compatibility (no cyan) */}
         <mesh>
           <planeGeometry args={[4, 3]} />
-          <shaderMaterial
-            uniforms={{
-              map: { value: texture },
-              uvScale: { value: uvScale },
-              uvOffset: { value: uvOffset }
+          <meshBasicMaterial
+            map={texture}
+            transparent={false}
+            toneMapped={false}
+            onBeforeCompile={(shader) => {
+              // Inject UV offset/scale to get cover-crop effect
+              shader.uniforms.uvScale = { value: uvScale };
+              shader.uniforms.uvOffset = { value: uvOffset };
+              shader.vertexShader = 'uniform vec2 uvScale;\nuniform vec2 uvOffset;\n' + shader.vertexShader;
+              shader.vertexShader = shader.vertexShader.replace(
+                '#include <uv_vertex>',
+                'vMapUv = uv * uvScale + uvOffset;'
+              );
             }}
-            vertexShader={`
-              varying vec2 vUv;
-              uniform vec2 uvScale;
-              uniform vec2 uvOffset;
-              void main() {
-                vUv = uv * uvScale + uvOffset;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-              }
-            `}
-            fragmentShader={`
-              varying vec2 vUv;
-              uniform sampler2D map;
-              void main() {
-                vec4 texColor = texture2D(map, vUv);
-                // Sharpen slightly or boost contrast for cinematic feel
-                texColor.rgb = pow(texColor.rgb, vec3(0.9)); 
-                gl_FragColor = vec4(texColor.rgb, 1.0);
-              }
-            `}
           />
         </mesh>
         

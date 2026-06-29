@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect, useCallback } from 'react';
 import { FloatingHearts } from './FloatingHearts';
 import { BackgroundTwinkle } from './BackgroundTwinkle';
-import { PHOTO_URL, CORRECT_PASSCODE } from '../constants';
+import { PHOTO_URL, verifyPasscode } from '../constants';
 
 const PhotoPlaceholder = () => (
   <div className="w-full h-full bg-gradient-to-br from-pink-900/40 to-black/40 flex flex-col items-center justify-center p-6 text-center">
@@ -29,15 +29,37 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
   const [failCount, setFailCount] = useState(0);
   const [hint, setHint] = useState('');
   const [imgError, setImgError] = useState(false);
+  const [locked, setLocked] = useState(false);
+  const [lockSecondsLeft, setLockSecondsLeft] = useState(0);
+  const [checking, setChecking] = useState(false);
 
   const handleInput = useCallback((val: string) => {
-    // Use functional update to avoid race conditions on very rapid clicks
+    if (locked || checking) return;
     setPasscode(prev => (prev.length < 4 ? prev + val : prev));
-  }, []);
+  }, [locked, checking]);
 
   const handleBackspace = useCallback(() => {
+    if (locked || checking) return;
     setPasscode(prev => prev.slice(0, -1));
-  }, []);
+  }, [locked, checking]);
+
+  // Lockout countdown timer
+  useEffect(() => {
+    if (!locked) return;
+    const interval = setInterval(() => {
+      setLockSecondsLeft(prev => {
+        if (prev <= 1) {
+          setLocked(false);
+          setFailCount(0);
+          setHint('');
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [locked]);
 
   // Listen to desktop keyboard input
   useEffect(() => {
@@ -56,21 +78,30 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
   }, [handleInput, handleBackspace]);
 
   useEffect(() => {
-    if (passcode.length === 4) {
-      if (passcode === CORRECT_PASSCODE) {
-        onSuccess();
-      } else {
-        const nextFailCount = failCount + 1;
-        setFailCount(nextFailCount);
-        setPasscode('');
-        
-        if (nextFailCount === 1) setHint("it was the our both birthday dates");
-        else if (nextFailCount === 2) setHint("try again madam jiii,.. the password is my phone password raaa");
-        else if (nextFailCount === 3) setHint("try again birthday girl, u really dont know our birthday dates ?");
-        else setHint("solve this 143*30-1288");
-      }
+    if (passcode.length === 4 && !locked && !checking) {
+      setChecking(true);
+      verifyPasscode(passcode).then(isCorrect => {
+        setChecking(false);
+        if (isCorrect) {
+          onSuccess();
+        } else {
+          const nextFailCount = failCount + 1;
+          setFailCount(nextFailCount);
+          setPasscode('');
+
+          // Lock after 10 failed attempts for 5 minutes
+          if (nextFailCount >= 10) {
+            setLocked(true);
+            setLockSecondsLeft(300);
+            setHint('Too many wrong attempts. Locked for 5 minutes.');
+          } else if (nextFailCount === 1) setHint('it was the our both birthday dates');
+          else if (nextFailCount === 2) setHint('try again madam jiii,.. the password is my phone password raaa');
+          else if (nextFailCount === 3) setHint('try again birthday girl, u really dont know our birthday dates ?');
+          else setHint('solve this 143*30-1288');
+        }
+      });
     }
-  }, [passcode, failCount, onSuccess]);
+  }, [passcode, failCount, onSuccess, locked, checking]);
 
   const photoSrc = PHOTO_URL;
 
