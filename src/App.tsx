@@ -64,7 +64,7 @@ export default function App() {
       // Add Stage 8 Magazine Photos
       const magPhotos = ['frontcover.jpg', 'backcover.jpg', 'bg-p3.jpg', 'photo-inside-bg-1.jpg', 'photo-inside-bg-2.jpg'];
       for (let i = 1; i <= 27; i++) {
-        const ext = (i === 26 || i === 27) ? 'jpeg' : 'jpg';
+        const ext = (i === 24 || i === 26 || i === 27) ? 'jpeg' : 'jpg';
         magPhotos.push(`photo-p${i}.${ext}`);
       }
       

@@ -10,7 +10,7 @@ const getAssetUrl = (filename: string) => {
 
 // Reusable Image component to handle object covering properly inside magazine. 
 // Uses advanced CSS to automatically frame faces and bodies ("AI Framing").
-const MagImage = ({ slotName, className }: { slotName?: string, className?: string }) => {
+const MagImage = ({ slotName, className, objectPosition = "object-[center_20%]" }: { slotName?: string, className?: string, objectPosition?: string }) => {
   const [error, setError] = React.useState(false);
   // Support both src/assets and public/magazine-photos
   const srcValue = slotName ? getAssetUrl(slotName) : undefined;
@@ -19,7 +19,7 @@ const MagImage = ({ slotName, className }: { slotName?: string, className?: stri
     {!error && slotName ? (
       // When an actual photo is loaded, this acts as the "AI" framer: 
       // It perfectly compresses/stretches and centers around upper-body/faces
-      <img src={srcValue} loading="lazy" decoding="async" onError={() => setError(true)} className="w-full h-full object-cover object-[center_20%] z-0 origin-center" alt={slotName} />
+      <img src={srcValue} loading="lazy" decoding="async" onError={() => setError(true)} className={`w-full h-full object-cover ${objectPosition} z-0 origin-center`} alt={slotName} />
     ) : (
       <div className="opacity-[0.35] text-stone-700 flex flex-col items-center z-0">
          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
@@ -168,11 +168,8 @@ export const pages = [
        </h2>
 
        {/* Decorative Image at the bottom left */}
-       <div className="absolute bottom-8 left-8 w-32 h-48 bg-[#e0dcd3] -rotate-[8deg] shadow-lg z-10 border-[3px] border-white flex items-center justify-center">
-          <div className="opacity-30 text-stone-700 flex flex-col items-center justify-center text-center px-2">
-             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-1"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-             <span className="font-sans text-[0.35rem] tracking-[0.2em] uppercase font-medium">Portrait<br/>Slot</span>
-          </div>
+       <div className="absolute bottom-8 left-8 w-32 h-48 bg-[#e0dcd3] -rotate-[8deg] shadow-lg z-10 border-[3px] border-white flex items-center justify-center overflow-hidden">
+          <MagImage slotName="photo-p22.jpg" className="w-full h-full" objectPosition="object-[center_top]" />
        </div>
     </div>
   ),
@@ -387,10 +384,10 @@ export const pages = [
        </h2>
        
        <div className="flex-1 grid grid-cols-2 grid-rows-3 gap-1 z-10 p-2">
-           <MagImage slotName="photo-p24.jpg" className="col-span-1 row-span-1" />
-           <MagImage slotName="photo-p25.jpg" className="col-span-1 row-span-2" />
-           <MagImage slotName="photo-p26.jpeg" className="col-span-1 row-span-2" />
-           <MagImage slotName="photo-p27.jpeg" className="col-span-1 row-span-1" />
+           <MagImage slotName="photo-p24.jpeg" className="col-span-1 row-span-1" objectPosition="object-center" />
+           <MagImage slotName="photo-p25.jpg" className="col-span-1 row-span-2" objectPosition="object-center" />
+           <MagImage slotName="photo-p26.jpeg" className="col-span-1 row-span-2" objectPosition="object-[center_top]" />
+           <MagImage slotName="photo-p27.jpeg" className="col-span-1 row-span-1" objectPosition="object-[center_top]" />
        </div>
     </div>
   ),

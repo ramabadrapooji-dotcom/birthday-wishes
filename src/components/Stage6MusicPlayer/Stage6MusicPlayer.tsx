@@ -27,12 +27,13 @@ const getAssetUrl = (filename: string) => {
   }
 };
 
-const DEFAULT_PLAYLIST: Track[] = STAGE7_PLAYLIST.map(song => ({
+const DEFAULT_PLAYLIST: Track[] = STAGE7_PLAYLIST.map((song: any) => ({
   title: song.title,
   artist: song.artist,
   url: getAssetUrl(song.filename),
   fallbackUrl: song.fallbackUrl,
-  cover: song.cover
+  cover: song.cover,
+  subtitle: song.subtitle
 }));
 
 const PARTICLES = Array.from({ length: 30 }).map((_, i) => ({
@@ -366,7 +367,7 @@ export function Stage6MusicPlayer({ onBack, onNext }: { onBack?: () => void, onN
                      transition={{ delay: 0.2 }}
                      className="text-white/50 text-[10px] sm:text-xs mt-1 italic font-light tracking-wide"
                    >
-                     "A special song for your special day..."
+                     "{currentTrack.subtitle || "A special song for your special day..."}"
                    </motion.p>
                  </div>
                </div>

@@ -4,4 +4,5 @@ export interface Track {
   url: string;
   fallbackUrl: string;
   cover: string;
+  subtitle?: string;
 }
