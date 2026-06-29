@@ -88,7 +88,7 @@ export const memoriesData: MemoryData[] = [
     location: '2:00 PM',
     story: 'On this moment we take our first photo with u seperately and group photos and also our friends are mismers about our relation that u didnt know that im already in love with u in that situation. But we took the picture but the heart rate are raising in our both hearts... but it feels awesome moment.',
     emotion: 'First Love & Butterflies',
-    imageUrl: getAssetUrl('mem9.jpg'),
+    imageUrl: getAssetUrl('mem9.jpeg'),
     position: [0, 0, 0],
   }
 ];

@@ -20,7 +20,7 @@ export const getQualitySettings = (quality: QualityLevel) => {
       return {
         particleCount: 10000, // Reduced from 15k
         asteroidCount: 60, // Reduced
-        meteorChance: 0.05,
+        meteorChance: 0.5,
         shadows: true,
         postProcessing: true,
         textureRes: 2048,
@@ -30,7 +30,7 @@ export const getQualitySettings = (quality: QualityLevel) => {
       return {
         particleCount: 4000,
         asteroidCount: 30,
-        meteorChance: 0.02,
+        meteorChance: 0.3,
         shadows: false,
         postProcessing: true,
         textureRes: 1024,
@@ -41,7 +41,7 @@ export const getQualitySettings = (quality: QualityLevel) => {
       return {
         particleCount: 1000,
         asteroidCount: 10,
-        meteorChance: 0.01,
+        meteorChance: 0.2,
         shadows: false,
         postProcessing: false,
         textureRes: 512,

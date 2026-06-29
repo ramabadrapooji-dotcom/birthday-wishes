@@ -85,10 +85,11 @@ export default function App() {
 
       // Add Stage 9 Memory Photos
       for (let i = 1; i <= 9; i++) {
+        const ext = i === 9 ? 'jpeg' : 'jpg';
         try {
-          imagesToPreload.push(new URL(`./assets/mem${i}.jpg`, import.meta.url).href);
+          imagesToPreload.push(new URL(`./assets/mem${i}.${ext}`, import.meta.url).href);
         } catch {}
-        imagesToPreload.push(`/assets/mem${i}.jpg`);
+        imagesToPreload.push(`/assets/mem${i}.${ext}`);
       }
 
       // Trigger standard Image loads (caching in browser memory/HTTP cache)

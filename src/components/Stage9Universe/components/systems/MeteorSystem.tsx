@@ -54,7 +54,7 @@ export default function MeteorSystem({ chance = 0.05 }: { chance?: number }) {
           -30 - Math.random() * 35, // slower, cinematic descent
           (Math.random() - 0.5) * 60
         );
-        inactive.scale = 0.15 + Math.random() * 0.6;
+        inactive.scale = 1.0 + Math.random() * 2.0;
         inactive.life = 1.0;
       }
     }
