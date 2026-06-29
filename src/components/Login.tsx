@@ -67,7 +67,7 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
         if (nextFailCount === 1) setHint("it was the our both birthday dates");
         else if (nextFailCount === 2) setHint("try again madam jiii,.. the password is my phone password raaa");
         else if (nextFailCount === 3) setHint("try again birthday girl, u really dont know our birthday dates ?");
-        else setHint("solve this 143*30-1284");
+        else setHint("solve this 143*30-1288");
       }
     }
   }, [passcode, failCount, onSuccess]);

@@ -25,7 +25,7 @@ export const interactiveMessages = [
 
 export const PHOTO_URL = loginPhoto;
 export const ENVELOPE_COVER_URL = envelopeCover;
-export const CORRECT_PASSCODE = '3006';
+export const CORRECT_PASSCODE = '3002';
 
 export const STAGE7_PLAYLIST = [
   { 

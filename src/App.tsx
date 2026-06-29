@@ -15,6 +15,7 @@ import Stage5 from './sections/Stage5';
 import Stage6 from './sections/Stage6';
 import { Stage6MusicPlayer as Stage7 } from './components/Stage6MusicPlayer';
 import { Stage8Magazine } from './components/Stage8Magazine';
+import Stage9Universe from './components/Stage9Universe';
 
 // Constants & Types
 import { messages, interactiveMessages, MUSIC_URL, ENVELOPE_COVER_URL, PHOTO_URL } from './constants';
@@ -31,6 +32,7 @@ export default function App() {
   const [showStage6, setShowStage6] = useState(false);
   const [showStage7, setShowStage7] = useState(false);
   const [showStage8, setShowStage8] = useState(false);
+  const [showStage9, setShowStage9] = useState(false);
   const [key, setKey] = useState(0); 
   const [pops, setPops] = useState<{ id: number; x: number; y: number; message: string }[]>([]);
   const [popIndex, setPopIndex] = useState(0);
@@ -80,6 +82,14 @@ export default function App() {
         imagesToPreload.push(new URL('./assets/puzzle-photo.jpg', import.meta.url).href);
       } catch {}
       imagesToPreload.push('/puzzle-photo.jpg');
+
+      // Add Stage 9 Memory Photos
+      for (let i = 1; i <= 9; i++) {
+        try {
+          imagesToPreload.push(new URL(`./assets/mem${i}.jpg`, import.meta.url).href);
+        } catch {}
+        imagesToPreload.push(`/assets/mem${i}.jpg`);
+      }
 
       // Trigger standard Image loads (caching in browser memory/HTTP cache)
       imagesToPreload.forEach(src => {
@@ -139,6 +149,16 @@ export default function App() {
     }
   };
 
+  const goToHome = useCallback(() => {
+    setShowStage4(false);
+    setShowStage5(false);
+    setShowStage6(false);
+    setShowStage7(false);
+    setShowStage8(false);
+    setShowStage9(false);
+    setHasStarted(false);
+  }, []);
+
   const resetExperience = useCallback(() => {
     setKey(prev => prev + 1);
     setShowText(false);
@@ -191,7 +211,17 @@ export default function App() {
           <motion.div key="content-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-black z-[50]">
             <BackgroundTwinkle />
             <AnimatePresence mode="wait">
-              {showStage8 ? (
+              {showStage9 ? (
+                <motion.div
+                  key="stage9-wrap"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full h-full"
+                >
+                  <Stage9Universe onBack={() => setShowStage9(false)} onHome={goToHome} />
+                </motion.div>
+              ) : showStage8 ? (
                 <motion.div
                   key="stage8-wrap"
                   initial={{ opacity: 0 }}
@@ -199,7 +229,7 @@ export default function App() {
                   exit={{ opacity: 0 }}
                   className="w-full h-full"
                 >
-                  <Stage8Magazine onBack={() => setShowStage8(false)} />
+                  <Stage8Magazine onBack={() => setShowStage8(false)} onNext={() => setShowStage9(true)} onHome={goToHome} />
                 </motion.div>
               ) : showStage7 ? (
                 <motion.div

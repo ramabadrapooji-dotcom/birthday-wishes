@@ -36,13 +36,16 @@ const Page = React.forwardRef<HTMLDivElement, { children: React.ReactNode, numbe
 
 interface Stage8MagazineProps {
   onBack?: () => void;
+  onNext?: () => void;
+  onHome?: () => void;
 }
 
-export function Stage8Magazine({ onBack }: Stage8MagazineProps) {
+export function Stage8Magazine({ onBack, onNext, onHome }: Stage8MagazineProps) {
   const bookRef = useRef<any>(null);
   const [scale, setScale] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const isLastPage = currentPage >= pages.length - 2;
 
   const calculateShift = () => {
     // Center the book if it's on the cover
@@ -106,20 +109,37 @@ export function Stage8Magazine({ onBack }: Stage8MagazineProps) {
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-br from-black via-[#1a1816] to-[#2a1a1a] opacity-80 pointer-events-none" />
 
-      {/* Back Button */}
-      {onBack && (
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onBack}
-          className="fixed top-6 left-6 z-[200] px-5 py-2.5 bg-gradient-to-r from-amber-800/80 to-yellow-900/80 hover:from-amber-700 hover:to-yellow-800 backdrop-blur-md text-amber-100 border border-amber-500/40 rounded-full shadow-[0_0_15px_rgba(180,120,40,0.4)] transition-all font-medium flex items-center gap-2 cursor-pointer text-sm"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-          Back to Music
-        </motion.button>
-      )}
+      {/* Navigation Buttons Container */}
+      <div className="fixed top-6 left-6 z-[200] flex gap-3">
+        {onHome && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onHome}
+            className="px-4 py-2.5 bg-gradient-to-r from-amber-800/80 to-yellow-900/80 hover:from-amber-700 hover:to-yellow-800 backdrop-blur-md text-amber-100 border border-amber-500/40 rounded-full shadow-[0_0_15px_rgba(180,120,40,0.4)] transition-all font-medium flex items-center gap-2 cursor-pointer text-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            Home
+          </motion.button>
+        )}
+
+        {onBack && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onBack}
+            className="px-5 py-2.5 bg-gradient-to-r from-amber-800/80 to-yellow-900/80 hover:from-amber-700 hover:to-yellow-800 backdrop-blur-md text-amber-100 border border-amber-500/40 rounded-full shadow-[0_0_15px_rgba(180,120,40,0.4)] transition-all font-medium flex items-center gap-2 cursor-pointer text-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Back to Music
+          </motion.button>
+        )}
+      </div>
       
       <main className="relative z-10 w-full h-full flex items-center justify-center min-h-screen">
         <div className="w-full h-full min-h-screen flex items-center justify-center overflow-hidden relative font-sans" style={{ perspective: '1000px' }}>
@@ -190,6 +210,21 @@ export function Stage8Magazine({ onBack }: Stage8MagazineProps) {
           </motion.div>
         </div>
       </main>
+
+      {/* Next Blast Button */}
+      {isLastPage && onNext && (
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onNext}
+          className="fixed bottom-12 right-12 z-[200] px-8 py-4 bg-gradient-to-r from-amber-800 to-yellow-900 hover:from-amber-700 hover:to-yellow-800 backdrop-blur-md text-amber-100 border border-amber-500/40 rounded-full shadow-[0_0_30px_rgba(180,120,40,0.6)] transition-all font-bold flex items-center gap-2 cursor-pointer uppercase tracking-widest text-sm"
+        >
+          READY FOR THE NEXT BLAST? &rarr;
+        </motion.button>
+      )}
     </div>
   );
 }
