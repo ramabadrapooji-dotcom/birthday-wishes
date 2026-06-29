@@ -9,7 +9,8 @@ import {
   Pause, 
   SkipForward, 
   Shuffle,
-  Repeat
+  Repeat,
+  Upload
 } from 'lucide-react';
 import { Track } from './types';
 import { AudioVisualizer } from './AudioVisualizer';
@@ -321,12 +322,23 @@ export function Stage6MusicPlayer({ onBack, onNext }: { onBack?: () => void, onN
             <span className="text-[10px] text-pink-400 font-bold tracking-[0.2em] uppercase mb-0.5">Chapter VI</span>
             <h1 className="text-xs sm:text-sm font-semibold tracking-widest text-gray-200 uppercase letter-spacing-2">Unforgettable</h1>
           </div>
-          <button 
-            className="p-2 sm:p-3 -mr-2 sm:-mr-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm"
-            onClick={() => setShowPlaylist(true)}
-          >
-            <MoreHorizontal className="w-6 h-6 sm:w-7 sm:h-7 text-gray-200" />
-          </button>
+          <div className="flex items-center gap-1 sm:gap-2">
+            <label className="p-2 sm:p-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm cursor-pointer relative group">
+              <input 
+                type="file" 
+                accept="audio/*" 
+                onChange={handleAddLocalTrack}
+                className="hidden" 
+              />
+              <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-gray-200 group-hover:-translate-y-0.5 transition-transform" />
+            </label>
+            <button 
+              className="p-2 sm:p-3 -mr-2 sm:-mr-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm"
+              onClick={() => setShowPlaylist(true)}
+            >
+              <MoreHorizontal className="w-6 h-6 sm:w-7 sm:h-7 text-gray-200" />
+            </button>
+          </div>
         </motion.header>
 
         <div className="flex flex-col lg:flex-row flex-1 min-h-0 items-center justify-end gap-2 sm:gap-6 lg:gap-16 w-full mt-1 lg:mt-0 pb-2">
