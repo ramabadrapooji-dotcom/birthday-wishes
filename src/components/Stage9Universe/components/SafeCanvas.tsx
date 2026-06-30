@@ -50,8 +50,8 @@ export function SafeCanvas({ children, fallback, ...props }: SafeCanvasProps) {
   }
 
   return (
-    <div ref={containerRef} className="w-full h-full">
-      <Canvas {...props}>
+    <div ref={containerRef} className="w-full h-full" style={{ background: '#020205' }}>
+      <Canvas style={{ background: '#020205' }} {...props}>
         {children}
       </Canvas>
     </div>

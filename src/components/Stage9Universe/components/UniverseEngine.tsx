@@ -11,7 +11,7 @@ import AsteroidSystem from './systems/AsteroidSystem';
 import MeteorSystem from './systems/MeteorSystem';
 import MemorySystem from './systems/MemorySystem';
 import FinaleSystem from './systems/FinaleSystem';
-import PostProcessingSystem from './systems/PostProcessingSystem';
+// PostProcessingSystem disabled — caused cyan NaN crash on all devices
 import { SafeCanvas } from './SafeCanvas';
 import { ErrorBoundary } from './ErrorBoundary';
 import { Stats } from '@react-three/drei';
@@ -47,16 +47,24 @@ export default function UniverseEngine() {
   const settings = getQualitySettings(quality);
 
   return (
+    // CSS background ensures black shows even before WebGL initialises
+    <div style={{ position: 'absolute', inset: 0, background: '#020205' }}>
     <SafeCanvas
       gl={{ 
         antialias: false,
-        powerPreference: 'high-performance'
+        powerPreference: 'high-performance',
+        // Force clear color to deep-space black — prevents the cyan default
+        alpha: false,
       }}
+      style={{ background: '#020205' }}
       dpr={settings.pixelRatio}
       camera={{ position: [0, 0, 0], fov: 60, near: 0.1, far: 3000 }}
       onCreated={({ gl, scene }) => {
+        // Set via THREE scene background
         scene.background = new THREE.Color('#020205');
         scene.fog = new THREE.FogExp2('#020205', 0.005);
+        // Set via WebGL renderer clear color (most fundamental)
+        gl.setClearColor(new THREE.Color('#020205'), 1.0);
       }}
     >
       <Suspense fallback={null}>
@@ -115,5 +123,6 @@ export default function UniverseEngine() {
             and prevent the WebGL Bloom NaN cyan-screen crash on all devices. */}
       </Suspense>
     </SafeCanvas>
+    </div>
   );
 }
