@@ -107,30 +107,28 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
     texture.needsUpdate = true;
   }, [texture]);
 
-  // Object-fit: cover logic
-  const planeAspect = 4 / 3;
-  const imageAspect = texture.image ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height : 1;
+  // Dynamic aspect ratio calculation to prevent face-cropping
+  const imageAspect = texture.image ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height : 4/3;
+  
+  // Limit extreme aspect ratios so it doesn't get too ridiculously wide or thin
+  const planeAspect = Math.max(0.6, Math.min(imageAspect, 2.0));
+  const height = 3.0;
+  const width = height * planeAspect;
   
   const uvScale = useMemo(() => {
     if (imageAspect > planeAspect) {
-      // Image is wider than plane
       return new THREE.Vector2(planeAspect / imageAspect, 1);
     } else {
-      // Image is taller than plane
       return new THREE.Vector2(1, imageAspect / planeAspect);
     }
   }, [imageAspect, planeAspect]);
   
   const uvOffset = useMemo(() => {
     if (!texture) return new THREE.Vector2(0, 0);
-    // For portrait/tall photos: align to top center (heads first)
-    // For landscape/wide photos: align to center so faces are centered
     if (imageAspect < planeAspect) {
-      // Portrait: top-align
       const yOffset = (1 - uvScale.y) * 1.0;
       return new THREE.Vector2((1 - uvScale.x) / 2, yOffset);
     } else {
-      // Landscape (like mem2, mem7): center crop - exact center
       return new THREE.Vector2((1 - uvScale.x) / 2, (1 - uvScale.y) / 2);
     }
   }, [uvScale, imageAspect, planeAspect, texture]);
@@ -138,7 +136,6 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
   const isSelected = selectedMemory?.id === memory.id;
   const isHidden = appState === 'MEMORY_FOCUS' && !isSelected;
   
-  // Bobbing animation
   const randomOffset = useMemo(() => Math.random() * Math.PI * 2, []);
 
   const photoGroupRef = useRef<THREE.Group>(null);
@@ -149,11 +146,7 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
     
     if (appState === 'EXPLORE') {
       groupRef.current.position.y += Math.sin(state.clock.elapsedTime + randomOffset) * delta * 0.5;
-      
-      // Look at center (camera orbit origin)
       groupRef.current.lookAt(0, 0, 0);
-      
-      // Micro breathing scale — 0.5% sinusoidal pulse gives the frames a "living" presence
       const breathe = 1 + Math.sin(state.clock.elapsedTime * 0.8 + randomOffset) * 0.005;
       const targetScale = (hovered ? 1.05 : 1) * breathe;
       groupRef.current.scale.lerpVectors(groupRef.current.scale, { x: targetScale, y: targetScale, z: targetScale } as any, delta * 4);
@@ -161,17 +154,16 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
     
     if (photoGroupRef.current && panelGroupRef.current) {
       if (isSelected && appState === 'MEMORY_FOCUS') {
-        releaseTimer.current = 0; // reset release timer while focused
+        releaseTimer.current = 0;
         setFocusTime((prev) => prev + delta);
         
-        // Pre-focus hesitation: camera "thinks" for 0.55s before slide begins
         if (focusTime < 0.55) return;
         
-        // Emotional transition timing: smooth slide (starts after hesitation window)
-        photoGroupRef.current.position.lerp(new THREE.Vector3(2.5, 0, 0), delta * 2);
+        // Dynamically slide out based on width to prevent overlap
+        const slideDist = Math.max(2.5, (width / 2) + 0.5);
+        photoGroupRef.current.position.lerp(new THREE.Vector3(slideDist, 0, 0), delta * 2);
         panelGroupRef.current.position.lerp(new THREE.Vector3(-2.5, 0, 0), delta * 2);
         
-        // Slow fade-in for the story panel — floats in gently after slight delay
         const targetScale = focusTime > 1.1 ? 1 : 0.001;
         panelGroupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), delta * 1.5);
         
@@ -182,11 +174,8 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
         setFocusTime(0);
         releaseTimer.current += delta;
 
-        // EMOTIONAL RELEASE LINGER: hold position for RELEASE_LINGER seconds before resetting
-        // This gives the camera time to emotionally "let go" before the frame slides away
         if (releaseTimer.current < RELEASE_LINGER) return;
 
-        // Slightly slower reset so the return also feels graceful (delta*3 from 4)
         photoGroupRef.current.position.lerp(new THREE.Vector3(0, 0, 0), delta * 3);
         panelGroupRef.current.position.lerp(new THREE.Vector3(0, 0, 0), delta * 3);
         panelGroupRef.current.scale.lerp(new THREE.Vector3(0.001, 0.001, 0.001), delta * 3);
@@ -215,9 +204,9 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
       visible={!isHidden}
     >
       <group ref={photoGroupRef}>
-        {/* Premium Glass Frame — simplified for mobile stability */}
+        {/* Premium Glass Frame */}
         <mesh position={[0, 0, -0.05]}>
-          <boxGeometry args={[4.2, 3.2, 0.05]} />
+          <boxGeometry args={[width + 0.2, height + 0.2, 0.05]} />
           <meshStandardMaterial 
             ref={materialRef as any}
             color="#ccccff"
@@ -230,15 +219,14 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
           />
         </mesh>
         
-        {/* Photo Plane — using meshBasicMaterial for mobile compatibility (no cyan) */}
+        {/* Photo Plane */}
         <mesh>
-          <planeGeometry args={[4, 3]} />
+          <planeGeometry args={[width, height]} />
           <meshBasicMaterial
             map={texture}
             transparent={false}
             toneMapped={false}
             onBeforeCompile={(shader) => {
-              // Inject UV offset/scale to get cover-crop effect
               shader.uniforms.uvScale = { value: uvScale };
               shader.uniforms.uvOffset = { value: uvOffset };
               shader.vertexShader = 'uniform vec2 uvScale;\nuniform vec2 uvOffset;\n' + shader.vertexShader;
@@ -252,7 +240,7 @@ function MemoryPhoto({ memory, index }: { memory: MemoryData, index: number }) {
         
         {/* Cinematic Glow Behind */}
         <mesh position={[0, 0, -0.1]}>
-          <planeGeometry args={[4.5, 3.5]} />
+          <planeGeometry args={[width + 0.5, height + 0.5]} />
           <meshBasicMaterial 
             color="#ffaa44" 
             transparent 
