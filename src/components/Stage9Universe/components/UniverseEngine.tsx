@@ -111,11 +111,8 @@ export default function UniverseEngine() {
           </ErrorBoundary>
         )}
         
-        {settings.postProcessing && (
-          <ErrorBoundary fallback={null}>
-            <PostProcessingSystem quality={quality} />
-          </ErrorBoundary>
-        )}
+        {/* PostProcessing has been fully disabled to guarantee 100% stability
+            and prevent the WebGL Bloom NaN cyan-screen crash on all devices. */}
       </Suspense>
     </SafeCanvas>
   );
