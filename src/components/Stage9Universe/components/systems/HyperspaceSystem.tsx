@@ -97,19 +97,20 @@ export default function HyperspaceSystem() {
       hyperspaceTime.current = 0;
       settleTime.current += delta;
 
+      // FAST decay — prevents additive color overflow (cyan screen) during transition
+      // Old values (0.25/0.6) were way too slow, causing 10+ seconds of bright lines
       if (settleTime.current < SETTLE_DURATION) {
-        // POST-WARP EXHALE: ultra-slow decay — stars linger briefly, universe breathes out
-        // This creates the "memory of speed" before the tunnel fully dissolves
-        uniforms.progress.value = THREE.MathUtils.lerp(uniforms.progress.value, 0, delta * 0.25);
+        uniforms.progress.value = THREE.MathUtils.lerp(uniforms.progress.value, 0, delta * 4.0);
       } else {
-        // Normal cinematic slowdown — exponential decay
-        uniforms.progress.value = THREE.MathUtils.lerp(uniforms.progress.value, 0, delta * 0.6);
+        uniforms.progress.value = THREE.MathUtils.lerp(uniforms.progress.value, 0, delta * 8.0);
       }
+      // Hard cutoff to zero when very small — prevents lingering NaN-prone values
+      if (uniforms.progress.value < 0.001) uniforms.progress.value = 0;
       uniforms.speed.value = Math.pow(uniforms.progress.value, 2.0) * 8000.0;
     }
     
     if (linesRef.current) {
-      if (uniforms.progress.value > 0.01) {
+      if (uniforms.progress.value > 0.05) {
         linesRef.current.visible = true;
         const mat = linesRef.current.material as THREE.ShaderMaterial;
         mat.uniforms.progress.value = uniforms.progress.value;

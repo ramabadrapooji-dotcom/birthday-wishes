@@ -155,7 +155,9 @@ export default function ParticleSystem({ count = 5000 }: { count?: number }) {
             
             // Soft edge
             float alpha = smoothstep(0.5, 0.2, dist) * vAlpha;
-            gl_FragColor = vec4(vColor, alpha);
+            // Clamp to prevent additive overflow → cyan screen
+            alpha = clamp(alpha, 0.0, 0.6);
+            gl_FragColor = vec4(vColor * alpha, alpha);
           }
         `}
       />
