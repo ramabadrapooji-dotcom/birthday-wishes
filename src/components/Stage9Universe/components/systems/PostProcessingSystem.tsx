@@ -16,7 +16,7 @@ export default function PostProcessingSystem({ quality }: { quality: QualityLeve
         intensity={isFinale ? 3.0 : isHyperspace ? 2.5 : 1.5} 
         luminanceThreshold={isHyperspace ? 0.1 : 0.2} 
         luminanceSmoothing={0.9} 
-        mipmapBlur 
+        // Removed mipmapBlur as it causes NaN cyan-screen crashes on many mobile GPUs
       />
       
       {isHighQuality && (

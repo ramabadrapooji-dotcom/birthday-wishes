@@ -1,10 +1,14 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+// This file is a standalone dev entry (not used by the main app).
+// The actual Stage9Universe export is in ./index.tsx
+import Stage9Universe from './index';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+const rootEl = document.getElementById('root');
+if (rootEl) {
+  createRoot(rootEl).render(
+    <StrictMode>
+      <Stage9Universe />
+    </StrictMode>,
+  );
+}

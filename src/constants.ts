@@ -26,8 +26,8 @@ export const interactiveMessages = [
 export const PHOTO_URL = loginPhoto;
 export const ENVELOPE_COVER_URL = envelopeCover;
 // Passcode is stored as a SHA-256 hash — never exposed in plaintext in the bundle.
-// Hash of '3002' (generated offline). To change, update with: sha256('newcode')
-export const PASSCODE_HASH = 'e9bbcebb50c01c0d6fe1da1b5ec19c8fd86dee6826ff9ac05f26a0bda6d23e0e';
+// Hash of '3002'. To change: sha256('newcode')
+export const PASSCODE_HASH = '3ba982075eba89702c1637b9ce03d8a3d8b6dce9434dd07a4c30b5525ab27850';
 
 // Constant-time string comparison to prevent timing attacks
 export async function verifyPasscode(attempt: string): Promise<boolean> {
